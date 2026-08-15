@@ -91,12 +91,10 @@ function exportReportCsv(){
 function reportPrintTable(){const rows=reportCsvRows(),head=rows.shift()||[];return `<table class="report-print-table"><thead><tr>${head.map(cell=>`<th>${esc(cell)}</th>`).join('')}</tr></thead><tbody>${rows.map(row=>`<tr>${row.map((cell,index)=>`<td class="${index>=5?'number':''}">${typeof cell==='number'?money(cell):esc(cell)}</td>`).join('')}</tr>`).join('')}</tbody></table>`}
 function printCurrentReport(){
   renderReports();const title={profitability:'Profitability report',cashflow:'Cash flow report',receivables:'Customer receivables report',payables:'Supplier payables report'}[reportTab],from=$('#reportFrom').value,to=$('#reportTo').value,range=from||to?`${from?prettyDate(from):'Beginning'} to ${to?prettyDate(to):'Today'}`:'All time';
-  $('#reportPrintDocument').innerHTML=`<div class="doc-head"><div class="doc-brand"><img class="doc-logo" src="assets/mughal-logo.png?v=2" alt="Mughal Interior"><p>Business accounts and project management</p></div><div class="doc-meta"><b>${esc(title)}</b><p>Period: ${esc(range)}</p><p>Generated: ${prettyDate(today())}</p></div></div><div class="doc-title"><p class="eyebrow">BUSINESS REPORT</p><h1>${esc(title)}</h1></div><div class="report-print-summary">${$('#reportSummary').innerHTML}</div>${reportPrintTable()}`;printSheet('#reportPrintSheet');
+  $('#reportPrintDocument').innerHTML=`<div class="doc-head"><div class="doc-brand"><img class="doc-logo" src="assets/mughal-logo.png?v=2" alt="Mughal Interior"><p>${esc(businessPrintCaption())}</p></div><div class="doc-meta"><b>${esc(title)}</b><p>Period: ${esc(range)}</p><p>Generated: ${prettyDate(today())}</p></div></div><div class="doc-title"><p class="eyebrow">BUSINESS REPORT</p><h1>${esc(title)}</h1></div><div class="report-print-summary">${$('#reportSummary').innerHTML}</div>${reportPrintTable()}`;printSheet('#reportPrintSheet');
 }
 
 $$('[data-report-tab]').forEach(button=>button.addEventListener('click',()=>{reportTab=button.dataset.reportTab;renderReports()}));
 ['#reportFrom','#reportTo','#reportProjectFilter','#reportPartyFilter','#reportSupplierFilter','#reportAccountFilter'].forEach(selector=>$(selector).addEventListener('change',renderReports));
 $('#clearReportFiltersBtn').addEventListener('click',()=>{['#reportFrom','#reportTo'].forEach(selector=>$(selector).value='');['#reportProjectFilter','#reportPartyFilter','#reportSupplierFilter','#reportAccountFilter'].forEach(selector=>$(selector).value='all');renderReports()});
 $('#exportReportCsvBtn').addEventListener('click',exportReportCsv);$('#printReportBtn').addEventListener('click',printCurrentReport);
-
-boot();

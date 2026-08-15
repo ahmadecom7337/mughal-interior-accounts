@@ -1,6 +1,6 @@
 # Mughal Interior Accounts — deployment
 
-This folder contains the GitHub Pages frontend and Supabase migrations for customers, project quotations, invoices, inventory, suppliers, material purchase bills, walk-in orders, cash/bank payments, and business reports.
+This folder contains the complete testable V1 for customers, project quotations, invoices, inventory, suppliers, material purchase bills, walk-in orders, cash/bank payments, reports, dashboard alerts, staff permissions, business settings, and data backup.
 
 ## Part A — Create the Supabase backend
 
@@ -15,10 +15,11 @@ This folder contains the GitHub Pages frontend and Supabase migrations for custo
    - `supabase-suppliers-purchase-bills.sql`
    - `supabase-walk-in-orders.sql`
    - `supabase-payments-accounts.sql`
+   - `supabase-complete-v1.sql`
 3. Open **Authentication → Providers → Email** and keep Email enabled.
 4. For controlled testing, turn off public user sign-up after creating the test accounts.
 5. Open **Authentication → Users → Add user**. Create the owner's email/password account. Select the option that marks the email as confirmed.
-6. Create each tester in the same way. The supplied database trigger gives every newly created user a separate test workspace. Sharing one workspace between staff will be added when the staff-management module is built.
+6. Create each tester in the same way. Confirm the tester's email, then sign in as the owner and open **Settings → Team → Add member**. Enter that registered email and choose Manager, Staff, or Viewer.
 7. Open the project **Connect** dialog or **Settings → API Keys**. Copy:
    - Project URL
    - Publishable key beginning with `sb_publishable_`
@@ -65,6 +66,10 @@ This folder contains the GitHub Pages frontend and Supabase migrations for custo
 - Review project and order profitability, cash flow, receivables, and supplier payables.
 - Filter reports by date and relevant business entity, then export CSV and save PDF.
 - Verify that unassigned purchases remain inventory and only assigned material appears as a job cost.
+- Check dashboard alerts for expiring quotations, overdue work and bills, and low stock.
+- Update business contact details and defaults; create a new quotation and invoice to verify those defaults.
+- Add a Viewer account and verify that create/edit/payment controls are hidden while reports remain available.
+- Download the JSON business backup from **Settings → Data & account**.
 - Refresh the page and verify that online data remains available.
 - Check tap targets, font sizes, forms, scrolling, and keyboard behaviour on mobile.
 
