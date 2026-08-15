@@ -1,6 +1,6 @@
 # Mughal Interior Accounts — deployment
 
-This folder contains the GitHub Pages frontend and Supabase migrations for customers, project quotations, invoices, inventory, suppliers, and material purchase bills.
+This folder contains the GitHub Pages frontend and Supabase migrations for customers, project quotations, invoices, inventory, suppliers, material purchase bills, and walk-in orders.
 
 ## Part A — Create the Supabase backend
 
@@ -13,6 +13,7 @@ This folder contains the GitHub Pages frontend and Supabase migrations for custo
    - `supabase-inventory-module.sql`
    - `supabase-inventory-policy-hardening.sql`
    - `supabase-suppliers-purchase-bills.sql`
+   - `supabase-walk-in-orders.sql`
 3. Open **Authentication → Providers → Email** and keep Email enabled.
 4. For controlled testing, turn off public user sign-up after creating the test accounts.
 5. Open **Authentication → Users → Add user**. Create the owner's email/password account. Select the option that marks the email as confirmed.
@@ -50,6 +51,10 @@ This folder contains the GitHub Pages frontend and Supabase migrations for custo
 - Add a supplier and post a purchase bill with two material lines.
 - Verify the purchase bill increases both material stock quantities.
 - Print the purchase bill and choose **Save as PDF**.
+- Create a walk-in order and move it from Pending to In Progress, Ready, and Delivered.
+- Add a receipt, labour cost, expense, and material to the walk-in order.
+- Verify the material assignment reduces stock and appears as an internal order cost.
+- Print the walk-in customer order and verify internal costs and profit are excluded.
 - Refresh the page and verify that online data remains available.
 - Check tap targets, font sizes, forms, scrolling, and keyboard behaviour on mobile.
 

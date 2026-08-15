@@ -83,5 +83,3 @@ $('#purchaseBillForm').onsubmit=async e=>{
     closeSheets();render();navigate('purchases');toast('Purchase bill posted and stock received.');viewPurchaseBill(billId)
   }catch(err){toast(err.message)}finally{button.disabled=false;button.textContent='Post bill & receive stock'}
 };
-
-boot();
