@@ -10,6 +10,7 @@
   <link rel="stylesheet" href="module2.css">
   <link rel="stylesheet" href="module3.css">
   <link rel="stylesheet" href="module4.css">
+  <link rel="stylesheet" href="module5.css">
 </head>
 <body>
   <div id="loginScreen" class="login-screen hidden">
@@ -49,9 +50,17 @@
         <div class="inventory-summary"><article><span>Stock value</span><strong id="inventoryValue">Rs. 0</strong></article><article><span>Materials</span><strong id="materialCount">0</strong></article><article><span>Low stock</span><strong id="lowStockCount">0</strong></article></div>
         <div class="inventory-toolbar"><label class="search"><span>⌕</span><input id="materialSearch" placeholder="Search material, category or SKU"></label><button class="btn soft" data-action="new-purchase">+ Record purchase</button></div><div id="materialList" class="material-grid"></div>
       </section>
+
+      <section id="purchasesView" class="view">
+        <div class="page-head"><div><p class="eyebrow">SUPPLIERS & BILLS</p><h1>Purchases</h1><p class="muted">Record supplier bills and receive their materials into stock.</p></div><div class="page-head-actions"><button class="btn ghost" data-action="new-supplier">+ Add supplier</button><button class="btn primary" data-action="new-purchase-bill">+ New bill</button></div></div>
+        <div class="purchase-summary"><article><span>Purchase value</span><strong id="purchaseValue">Rs. 0</strong></article><article><span>Amount due</span><strong id="purchaseDue">Rs. 0</strong></article><article><span>Suppliers</span><strong id="supplierCount">0</strong></article><article><span>Bills</span><strong id="purchaseBillCount">0</strong></article></div>
+        <div class="purchase-tabs"><button class="active" data-purchase-tab="bills">Purchase bills</button><button data-purchase-tab="suppliers">Suppliers</button></div>
+        <div id="purchaseBillsPanel"><div class="toolbar quote-tools"><label class="search"><span>⌕</span><input id="purchaseSearch" placeholder="Search bill, supplier or invoice number"></label><select id="purchaseStatusFilter" aria-label="Filter purchase bills"><option value="all">All payment statuses</option><option>Unpaid</option><option>Partly Paid</option><option>Paid</option></select></div><div id="purchaseBillList" class="card-list"></div></div>
+        <div id="suppliersPanel" class="hidden"><div class="toolbar"><label class="search"><span>⌕</span><input id="supplierSearch" placeholder="Search supplier, phone or address"></label></div><div id="supplierList" class="card-list"></div></div>
+      </section>
     </main>
     <button class="fab" data-action="new-project" aria-label="Create project">+</button>
-    <nav class="bottom-nav" aria-label="Main navigation"><button class="active" data-nav="home"><span>⌂</span>Home</button><button data-nav="parties"><span>♙</span>Parties</button><button data-nav="projects"><span>▣</span>Projects</button><button data-nav="inventory"><span>▦</span>Inventory</button><button data-nav="invoices"><span>▤</span>Invoices</button></nav>
+    <nav class="bottom-nav" aria-label="Main navigation"><button class="active" data-nav="home"><span>⌂</span>Home</button><button data-nav="parties"><span>♙</span>Parties</button><button data-nav="projects"><span>▣</span>Projects</button><button data-nav="inventory"><span>▦</span>Inventory</button><button data-nav="purchases"><span>▥</span>Purchases</button><button data-nav="invoices"><span>▤</span>Invoices</button></nav>
   </div>
 
   <div id="sheetBackdrop" class="backdrop hidden"></div>
@@ -78,11 +87,17 @@
 
   <aside id="materialDetailSheet" class="sheet full hidden" aria-modal="true" role="dialog"><div class="sheet-handle"></div><div class="sheet-head"><div><p class="eyebrow">STOCK LEDGER</p><h2 id="materialDetailTitle">Material details</h2></div><button class="icon-btn" data-close>×</button></div><div id="materialDetail"></div><div class="project-actions"><button id="editMaterialBtn" class="btn ghost">Edit material</button><button id="purchaseMaterialBtn" class="btn soft">+ Purchase</button><button id="issueMaterialBtn" class="btn primary">Assign to project</button></div></aside>
 
+  <aside id="supplierSheet" class="sheet hidden" aria-modal="true" role="dialog"><div class="sheet-handle"></div><div class="sheet-head"><div><p class="eyebrow">SUPPLIER DETAILS</p><h2 id="supplierSheetTitle">Add supplier</h2></div><button class="icon-btn" data-close>×</button></div><form id="supplierForm" class="form-grid"><input id="supplierId" type="hidden"><label class="span-2">Supplier name *<input id="supplierName" required placeholder="e.g. Lahore Boards Traders"></label><label>Contact person<input id="supplierContact" placeholder="Optional"></label><label>Phone<input id="supplierPhone" inputmode="tel" placeholder="03xx xxxxxxx"></label><label class="span-2">Address<textarea id="supplierAddress" rows="2" placeholder="Shop, market, area and city"></textarea></label><label class="span-2">Notes<textarea id="supplierNotes" rows="2" placeholder="Optional supplier notes"></textarea></label><div class="form-actions span-2"><button class="btn ghost" type="button" data-close>Cancel</button><button class="btn primary" type="submit">Save supplier</button></div></form></aside>
+
+  <aside id="purchaseBillSheet" class="sheet full hidden" aria-modal="true" role="dialog"><div class="sheet-handle"></div><div class="sheet-head"><div><p class="eyebrow">MATERIAL PURCHASE</p><h2>New purchase bill</h2></div><button class="icon-btn" data-close>×</button></div><form id="purchaseBillForm"><div class="form-grid"><label class="span-2">Supplier *<select id="purchaseBillSupplier" required></select></label><label>Bill date<input id="purchaseBillDate" type="date" required></label><label>Due date<input id="purchaseBillDueDate" type="date"></label><label class="span-2">Supplier invoice / reference<input id="purchaseBillReference" placeholder="Supplier's bill number"></label></div><div class="bill-items-head"><div><p class="eyebrow">BILL ITEMS</p><h3>Materials received</h3></div><button id="addPurchaseItemBtn" class="btn soft" type="button">+ Add item</button></div><div id="purchaseBillItems" class="purchase-items"></div><div class="bill-total"><span>Total purchase bill</span><b id="purchaseBillTotal">Rs. 0</b></div><label class="bill-notes">Notes<textarea id="purchaseBillNotes" rows="3" placeholder="Optional bill notes"></textarea></label><div class="form-actions"><button class="btn ghost" type="button" data-close>Cancel</button><button id="savePurchaseBillBtn" class="btn primary" type="submit">Post bill & receive stock</button></div></form></aside>
+
+  <aside id="purchaseBillDetailSheet" class="sheet full hidden" aria-modal="true" role="dialog"><div class="sheet-handle"></div><div class="sheet-head no-print"><div><p class="eyebrow">PURCHASE BILL</p><h2>Purchase details</h2></div><button class="icon-btn" data-close>×</button></div><div id="purchaseBillDocument" class="quote-document"></div><div class="detail-actions no-print"><button id="printPurchaseBillBtn" class="btn primary">Print / Save PDF</button></div></aside>
+
   <aside id="invoiceSheet" class="sheet hidden" aria-modal="true" role="dialog"><div class="sheet-handle"></div><div class="sheet-head"><div><p class="eyebrow">INVOICE</p><h2 id="invoiceSheetTitle">Generate invoice</h2></div><button class="icon-btn" data-close>×</button></div><form id="invoiceForm" class="form-grid"><input id="invoiceId" type="hidden"><label class="span-2">Approved project *<select id="invoiceProject" required></select><small>Shown as Project name — Party name</small></label><label>Invoice date<input id="invoiceDate" type="date" required></label><label>Due date<input id="invoiceDueDate" type="date"></label><label class="span-2">Invoice amount (Rs.)<input id="invoiceAmount" type="number" min="0" readonly></label><label>Status<select id="invoiceStatus"><option>Draft</option><option>Sent</option><option>Paid</option></select></label><label class="span-2">Notes<textarea id="invoiceNotes" rows="3" placeholder="Optional invoice notes"></textarea></label><div class="form-actions span-2"><button class="btn ghost" type="button" data-close>Cancel</button><button class="btn primary" type="submit">Save invoice</button></div></form></aside>
 
   <aside id="invoiceDetailSheet" class="sheet full hidden" aria-modal="true" role="dialog"><div class="sheet-handle"></div><div class="sheet-head no-print"><div><p class="eyebrow">INVOICE</p><h2>Invoice details</h2></div><button class="icon-btn" data-close>×</button></div><div id="invoiceDocument" class="quote-document"></div><div class="detail-actions no-print"><button id="editInvoiceBtn" class="btn ghost">Edit invoice</button><button id="printInvoiceBtn" class="btn primary">Print / Save PDF</button></div></aside>
 
   <div id="toast" class="toast hidden"></div>
-  <script src="config.js"></script><script src="app-v3.js?v=4"></script>
+  <script src="config.js"></script><script src="app-v3.js?v=5"></script><script src="app-v4.js?v=1"></script>
 </body>
 </html>

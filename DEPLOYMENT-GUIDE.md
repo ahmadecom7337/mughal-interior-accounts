@@ -1,11 +1,18 @@
-# Mughal Interior Accounts — Module 1 deployment
+# Mughal Interior Accounts — deployment
 
-This folder is the complete GitHub Pages frontend for Parties and Contract Quotations.
+This folder contains the GitHub Pages frontend and Supabase migrations for customers, project quotations, invoices, inventory, suppliers, and material purchase bills.
 
 ## Part A — Create the Supabase backend
 
 1. Open the existing Supabase project **Carpenter Acc App**.
-2. Open **SQL Editor**, choose **New query**, paste the complete contents of `supabase-schema.sql`, and press **Run**.
+2. For a fresh database, run the SQL files in this order:
+   - `supabase-schema.sql`
+   - `supabase-projects-module.sql`
+   - `supabase-project-quotation-invoices.sql`
+   - `supabase-migrate-legacy-quotations.sql`
+   - `supabase-inventory-module.sql`
+   - `supabase-inventory-policy-hardening.sql`
+   - `supabase-suppliers-purchase-bills.sql`
 3. Open **Authentication → Providers → Email** and keep Email enabled.
 4. For controlled testing, turn off public user sign-up after creating the test accounts.
 5. Open **Authentication → Users → Add user**. Create the owner's email/password account. Select the option that marks the email as confirmed.
@@ -37,12 +44,13 @@ This folder is the complete GitHub Pages frontend for Parties and Contract Quota
 
 - Add and edit a party.
 - Search parties by name, phone, and address.
-- Create a quotation with material.
-- Create a labour-only quotation.
-- Create a quotation showing both prices.
-- Save a draft, mark it sent, and approve it.
-- Print the quotation and choose **Save as PDF**.
+- Create, print, and approve a project quotation.
+- Generate an invoice only from an approved project.
+- Add a material and assign it to an approved project.
+- Add a supplier and post a purchase bill with two material lines.
+- Verify the purchase bill increases both material stock quantities.
+- Print the purchase bill and choose **Save as PDF**.
 - Refresh the page and verify that online data remains available.
 - Check tap targets, font sizes, forms, scrolling, and keyboard behaviour on mobile.
 
-Quotations in this module have no accounting impact. Invoice conversion will be added only after this workflow is approved.
+Customer and supplier payments are intentionally reserved for the Payments module. Until then, newly posted supplier bills remain unpaid and their full amount appears as due.
