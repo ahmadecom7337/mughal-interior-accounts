@@ -1,6 +1,6 @@
 # Mughal Interior Accounts — deployment
 
-This folder contains the GitHub Pages frontend and Supabase migrations for customers, project quotations, invoices, inventory, suppliers, material purchase bills, walk-in orders, and cash/bank payments.
+This folder contains the GitHub Pages frontend and Supabase migrations for customers, project quotations, invoices, inventory, suppliers, material purchase bills, walk-in orders, cash/bank payments, and business reports.
 
 ## Part A — Create the Supabase backend
 
@@ -62,6 +62,9 @@ This folder contains the GitHub Pages frontend and Supabase migrations for custo
 - Record other business income and an expense.
 - Transfer money between two accounts and verify the total business balance does not change.
 - Open an account ledger and print a payment record.
+- Review project and order profitability, cash flow, receivables, and supplier payables.
+- Filter reports by date and relevant business entity, then export CSV and save PDF.
+- Verify that unassigned purchases remain inventory and only assigned material appears as a job cost.
 - Refresh the page and verify that online data remains available.
 - Check tap targets, font sizes, forms, scrolling, and keyboard behaviour on mobile.
 
