@@ -1,6 +1,6 @@
 # Mughal Interior Accounts — deployment
 
-This folder contains the GitHub Pages frontend and Supabase migrations for customers, project quotations, invoices, inventory, suppliers, material purchase bills, and walk-in orders.
+This folder contains the GitHub Pages frontend and Supabase migrations for customers, project quotations, invoices, inventory, suppliers, material purchase bills, walk-in orders, and cash/bank payments.
 
 ## Part A — Create the Supabase backend
 
@@ -14,6 +14,7 @@ This folder contains the GitHub Pages frontend and Supabase migrations for custo
    - `supabase-inventory-policy-hardening.sql`
    - `supabase-suppliers-purchase-bills.sql`
    - `supabase-walk-in-orders.sql`
+   - `supabase-payments-accounts.sql`
 3. Open **Authentication → Providers → Email** and keep Email enabled.
 4. For controlled testing, turn off public user sign-up after creating the test accounts.
 5. Open **Authentication → Users → Add user**. Create the owner's email/password account. Select the option that marks the email as confirmed.
@@ -55,7 +56,13 @@ This folder contains the GitHub Pages frontend and Supabase migrations for custo
 - Add a receipt, labour cost, expense, and material to the walk-in order.
 - Verify the material assignment reduces stock and appears as an internal order cost.
 - Print the walk-in customer order and verify internal costs and profit are excluded.
+- Add cash, bank, and mobile-wallet payment accounts.
+- Receive a customer payment against an approved project and a walk-in order; verify each balance decreases.
+- Pay an unpaid supplier bill and verify its paid and due amounts update.
+- Record other business income and an expense.
+- Transfer money between two accounts and verify the total business balance does not change.
+- Open an account ledger and print a payment record.
 - Refresh the page and verify that online data remains available.
 - Check tap targets, font sizes, forms, scrolling, and keyboard behaviour on mobile.
 
-Customer and supplier payments are intentionally reserved for the Payments module. Until then, newly posted supplier bills remain unpaid and their full amount appears as due.
+Posted payments are immutable accounting records. Correct a mistaken payment with an opposite transaction rather than editing its amount or account.

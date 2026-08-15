@@ -69,6 +69,7 @@ async function setWalkInOrderStatus(status){
 
 function openWalkInEntry(type,orderId=state.activeWalkInOrder?.id){
   const order=state.walkInOrders.find(o=>o.id===orderId);if(!order||order.status==='Cancelled')return;
+  if(type==='receipt'){openPayment('customer_receipt',{walkInOrderId:order.id});return}
   const labels={receipt:'Add customer receipt',labour:'Add labour cost',expense:'Add order expense'},placeholders={receipt:'Cash received from customer',labour:'Carpenter or worker payment',expense:'Transport, polishing or other expense'};
   $('#walkInEntryForm').reset();$('#walkInEntryOrderId').value=order.id;$('#walkInEntryType').value=type;$('#walkInEntryDate').value=today();$('#walkInEntryTitle').textContent=labels[type];$('#walkInEntryDescription').placeholder=placeholders[type];closeSheets();openSheet('#walkInEntrySheet');
 }
@@ -133,5 +134,3 @@ $('#editWalkInOrderBtn').addEventListener('click',()=>openWalkInOrder(state.acti
 $('#advanceWalkInOrderBtn').addEventListener('click',()=>{const next={Pending:'In Progress','In Progress':'Ready',Ready:'Delivered'}[state.activeWalkInOrder?.status];if(next)setWalkInOrderStatus(next)});
 $('#cancelWalkInOrderBtn').addEventListener('click',()=>{if(confirm('Cancel this walk-in order?'))setWalkInOrderStatus('Cancelled')});
 $('#walkInOrderMaterialBtn').addEventListener('click',()=>openWalkInMaterial());$('#walkInOrderReceiptBtn').addEventListener('click',()=>openWalkInEntry('receipt'));$('#walkInOrderLabourBtn').addEventListener('click',()=>openWalkInEntry('labour'));$('#walkInOrderExpenseBtn').addEventListener('click',()=>openWalkInEntry('expense'));$('#printWalkInOrderBtn').addEventListener('click',()=>printSheet('#walkInOrderDetailSheet'));
-
-boot();
