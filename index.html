@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#163a2b">
+  <title>Mughal Interior Accounts</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div id="loginScreen" class="login-screen hidden">
+    <section class="login-card">
+      <div class="brand-mark">MI</div><p class="eyebrow">MUGHAL INTERIOR</p><h1>Welcome back</h1>
+      <p class="muted">Sign in to manage parties and contract quotations.</p>
+      <form id="loginForm" class="stack">
+        <label>Email<input id="loginEmail" type="email" autocomplete="email" placeholder="you@example.com" required></label>
+        <label>Password<input id="loginPassword" type="password" autocomplete="current-password" placeholder="Enter password" required></label>
+        <p id="loginError" class="form-error hidden"></p><button class="btn primary wide" type="submit">Sign in</button>
+      </form>
+    </section>
+  </div>
+
+  <div id="app" class="app hidden">
+    <header class="topbar"><div class="brand"><span class="brand-mark small">MI</span><div><b>Mughal Interior</b><small>Accounts</small></div></div><button id="profileBtn" class="avatar-btn" aria-label="Account menu">AI</button></header>
+    <main class="content">
+      <section id="homeView" class="view active">
+        <div class="welcome-row"><div><p class="eyebrow">GOOD DAY</p><h1>Work made simple.</h1><p class="muted">Parties and quotations at a glance.</p></div><button class="btn primary desktop-only" data-action="new-quote">+ New quotation</button></div>
+        <div class="summary-grid"><article class="summary-card forest"><span>Approved value</span><strong id="approvedValue">Rs. 0</strong><small>Approved quotations</small></article><article class="summary-card"><span>Parties</span><strong id="partyCount">0</strong><small>Active customers</small></article><article class="summary-card"><span>Open quotes</span><strong id="openCount">0</strong><small>Draft and sent</small></article></div>
+        <div class="section-head"><div><p class="eyebrow">RECENT</p><h2>Latest quotations</h2></div><button class="text-btn" data-nav="quotes">View all</button></div><div id="recentQuotes" class="card-list"></div>
+      </section>
+
+      <section id="partiesView" class="view">
+        <div class="page-head"><div><p class="eyebrow">CUSTOMERS</p><h1>Parties</h1><p class="muted">People and businesses you work with.</p></div><button class="btn primary" data-action="new-party">+ Add party</button></div>
+        <div class="toolbar"><label class="search"><span>⌕</span><input id="partySearch" placeholder="Search name, phone or area"></label></div><div id="partyList" class="card-list"></div>
+      </section>
+
+      <section id="quotesView" class="view">
+        <div class="page-head"><div><p class="eyebrow">CONTRACTS</p><h1>Quotations</h1><p class="muted">Commercial offers only—no accounting impact.</p></div><button class="btn primary" data-action="new-quote">+ New quotation</button></div>
+        <div class="toolbar quote-tools"><label class="search"><span>⌕</span><input id="quoteSearch" placeholder="Search quotation or project"></label><select id="statusFilter" aria-label="Filter status"><option value="all">All statuses</option><option>Draft</option><option>Sent</option><option>Approved</option><option>Rejected</option></select></div><div id="quoteList" class="card-list"></div>
+      </section>
+    </main>
+    <button class="fab" data-action="new-quote" aria-label="Create quotation">+</button>
+    <nav class="bottom-nav" aria-label="Main navigation"><button class="active" data-nav="home"><span>⌂</span>Home</button><button data-nav="parties"><span>♙</span>Parties</button><button data-nav="quotes"><span>▤</span>Quotes</button><button data-action="more"><span>•••</span>More</button></nav>
+  </div>
+
+  <div id="sheetBackdrop" class="backdrop hidden"></div>
+  <aside id="partySheet" class="sheet hidden" aria-modal="true" role="dialog">
+    <div class="sheet-handle"></div><div class="sheet-head"><div><p class="eyebrow">PARTY DETAILS</p><h2 id="partySheetTitle">Add party</h2></div><button class="icon-btn" data-close>×</button></div>
+    <form id="partyForm" class="form-grid"><input id="partyId" type="hidden"><label class="span-2">Party name *<input id="partyName" required placeholder="e.g. Ali Residence"></label><label>Phone<input id="partyPhone" inputmode="tel" placeholder="03xx xxxxxxx"></label><label>Party type<select id="partyType"><option>Individual</option><option>Business</option></select></label><label class="span-2">Address<textarea id="partyAddress" rows="2" placeholder="House, street, area and city"></textarea></label><label class="span-2">Notes<textarea id="partyNotes" rows="2" placeholder="Optional notes"></textarea></label><div class="form-actions span-2"><button class="btn ghost" type="button" data-close>Cancel</button><button class="btn primary" type="submit">Save party</button></div></form>
+  </aside>
+
+  <aside id="quoteSheet" class="sheet full hidden" aria-modal="true" role="dialog">
+    <div class="sheet-handle"></div><div class="sheet-head"><div><p class="eyebrow">CONTRACT QUOTATION</p><h2 id="quoteSheetTitle">New quotation</h2></div><button class="icon-btn" data-close>×</button></div>
+    <div class="steps" id="quoteSteps"><button class="active">1 <span>Project</span></button><i></i><button>2 <span>Pricing</span></button><i></i><button>3 <span>Review</span></button></div>
+    <form id="quoteForm"><input id="quoteId" type="hidden">
+      <section class="step-panel active" data-step="1"><div class="form-grid"><label class="span-2">Party *<select id="quoteParty" required></select></label><label class="span-2">Project title *<input id="projectTitle" required placeholder="e.g. Complete woodwork — DHA Residence"></label><label class="span-2">Project details *<textarea id="projectDetails" required rows="5" placeholder="Describe rooms, items, finish, fittings and exclusions"></textarea></label><label>Quotation date<input id="quoteDate" type="date" required></label><label>Valid until<input id="validUntil" type="date"></label><label>Expected start<input id="startDate" type="date"></label><label>Expected finish<input id="endDate" type="date"></label></div></section>
+      <section class="step-panel" data-step="2"><p class="field-title">Which option is being quoted?</p><div class="choice-grid"><label class="choice selected"><input type="radio" name="pricingMode" value="with_material" checked><b>With material</b><small>Mughal Interior supplies material and labour</small></label><label class="choice"><input type="radio" name="pricingMode" value="without_material"><b>Without material</b><small>Client supplies material; labour only</small></label><label class="choice"><input type="radio" name="pricingMode" value="both"><b>Show both options</b><small>Let the client compare both prices</small></label></div><div class="form-grid pricing-grid"><label id="withMaterialWrap">Price with material (Rs.)<input id="priceWithMaterial" type="number" min="0" step="1" inputmode="numeric" placeholder="0"></label><label id="withoutMaterialWrap">Price without material (Rs.)<input id="priceWithoutMaterial" type="number" min="0" step="1" inputmode="numeric" placeholder="0"></label><label class="span-2">Payment terms<textarea id="paymentTerms" rows="3" placeholder="e.g. 40% advance, 40% during work, 20% on completion"></textarea></label><label class="span-2">Terms and notes<textarea id="quoteNotes" rows="3" placeholder="Warranty, exclusions or special conditions"></textarea></label></div></section>
+      <section class="step-panel" data-step="3"><div id="quoteReview" class="review-card"></div></section>
+      <div class="wizard-actions"><button id="quoteBack" class="btn ghost hidden" type="button">Back</button><button id="quoteNext" class="btn primary" type="button">Continue</button><button id="quoteSave" class="btn primary hidden" type="submit">Save quotation</button></div>
+    </form>
+  </aside>
+
+  <aside id="detailSheet" class="sheet full hidden" aria-modal="true" role="dialog"><div class="sheet-handle"></div><div class="sheet-head no-print"><div><p class="eyebrow">QUOTATION</p><h2>Quotation details</h2></div><button class="icon-btn" data-close>×</button></div><div id="quoteDocument" class="quote-document"></div><div class="detail-actions no-print"><button id="editQuoteBtn" class="btn ghost">Edit</button><button id="statusQuoteBtn" class="btn soft">Mark as sent</button><button id="printQuoteBtn" class="btn primary">Print / Save PDF</button></div></aside>
+  <div id="toast" class="toast hidden"></div>
+  <script src="config.js"></script><script src="app.js"></script>
+</body>
+</html>
