@@ -84,7 +84,7 @@ label{color:#636b67;font-size:14px;font-weight:650}input,select,textarea{min-hei
 .login-screen{padding:24px;background:linear-gradient(145deg,#83ad9d,#719a8b)}.login-card{width:min(470px,100%);padding:40px;border:0;border-radius:42px;background:#fff;box-shadow:0 35px 90px rgba(56,85,74,.22)}.login-card h1{font-size:36px;font-weight:580}.login-logo{width:160px;height:96px}
 
 /* Opening screen: full animation, no crop. At this width the character itself is ~30% of its previous size. */
-.opening-splash{background:#f4f4f4}.opening-splash-content{--splash-width:min(240px,64vw);gap:8px}.opening-carpenter-crop{width:var(--splash-width);height:auto;overflow:visible}.opening-carpenter-crop img{position:static;display:block;width:100%;height:auto;max-width:none;mix-blend-mode:multiply}.opening-company-logo{width:min(220px,60vw)}
+.opening-splash{background:#f4f4f4}.opening-splash-content{--splash-width:min(240px,64vw);gap:8px}.opening-carpenter-crop{width:var(--splash-width);height:auto;overflow:visible}.opening-carpenter-crop img{position:static;display:block;width:100%;height:auto;max-width:none;opacity:0;transition:opacity .18s ease}.opening-carpenter-crop img.ready{opacity:1}.opening-company-logo{width:min(220px,60vw)}
 
 @media(min-width:1050px){
   .app{padding-left:226px}.bottom-nav{left:max(18px,calc((100vw - 1440px)/2 + 18px));top:18px;bottom:18px;transform:none;width:208px;height:auto;padding:96px 13px 20px;border-radius:42px 0 0 42px;background:linear-gradient(180deg,#83ad9d,#719b8b);box-shadow:none}
