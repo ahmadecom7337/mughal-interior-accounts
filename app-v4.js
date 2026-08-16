@@ -14,7 +14,7 @@ function renderPurchasing(){
   const bills=state.purchaseBills.filter(b=>(status==='all'||b.payment_status===status)&&[b.bill_number,b.supplier_invoice_no,supplierName(b.supplier_id)].join(' ').toLowerCase().includes(text));
   $('#purchaseBillList').innerHTML=bills.length?bills.map(purchaseBillCard).join(''):'<div class="empty"><b>No purchase bills found</b><span>Post a supplier bill to receive materials into stock.</span></div>';
   const supplierText=$('#supplierSearch').value.toLowerCase(),suppliers=state.suppliers.filter(s=>[s.name,s.contact_name,s.phone,s.address].join(' ').toLowerCase().includes(supplierText));
-  $('#supplierList').innerHTML=suppliers.length?suppliers.map(s=>{const bills=posted.filter(b=>b.supplier_id===s.id),balance=bills.reduce((sum,b)=>sum+purchaseBalance(b),0);return `<article class="item-card"><div><h3>${esc(s.name)}</h3><div class="meta">${s.contact_name?`<span>${esc(s.contact_name)}</span>`:''}${s.phone?`<span>${esc(s.phone)}</span>`:''}${s.address?`<span>${esc(s.address)}</span>`:''}</div><div class="supplier-balance">${bills.length} bill${bills.length===1?'':'s'} · ${money(balance)} due</div></div><div class="item-actions"><button class="mini-btn" data-edit-supplier="${s.id}">Edit</button><button class="btn soft" data-supplier-bill="${s.id}">New bill</button></div></article>`}).join(''):'<div class="empty"><b>No suppliers found</b><span>Add the shops and vendors you purchase materials from.</span></div>'
+  $('#supplierList').innerHTML=suppliers.length?suppliers.map(s=>{const bills=posted.filter(b=>b.supplier_id===s.id),balance=bills.reduce((sum,b)=>sum+purchaseBalance(b),0);return `<article class="item-card"><div><h3>${esc(s.name)}</h3><div class="meta">${s.contact_name?`<span>${esc(s.contact_name)}</span>`:''}${s.phone?`<span>${esc(s.phone)}</span>`:''}${s.address?`<span>${esc(s.address)}</span>`:''}</div><div class="supplier-balance">${bills.length} bill${bills.length===1?'':'s'} · ${money(balance)} due</div></div><div class="item-actions"><button class="mini-btn" data-view-supplier="${s.id}">View</button><button class="mini-btn" data-edit-supplier="${s.id}">Edit</button></div></article>`}).join(''):'<div class="empty"><b>No suppliers found</b><span>Add the shops and vendors you purchase materials from.</span></div>'
 }
 
 function openSupplier(supplierId=''){
@@ -37,10 +37,10 @@ function updatePurchaseBillTotal(){
   let total=0;$$('.purchase-item-row',$('#purchaseBillItems')).forEach(row=>{const line=Number($('.purchase-item-quantity',row).value||0)*Number($('.purchase-item-cost',row).value||0);$('.purchase-item-total',row).textContent=money(line);total+=line});$('#purchaseBillTotal').textContent=money(total);return total
 }
 
-function openPurchaseBill(materialId='',supplierId=''){
+function openPurchaseBill(materialId='',supplierId='',mode='credit'){
   if(!state.materials.length){toast('Add a material before recording a purchase bill.');openMaterial();return}
   if(!state.suppliers.length){toast('Add a supplier before recording a purchase bill.');openSupplier();return}
-  $('#purchaseBillForm').reset();fillPurchaseBillSuppliers(supplierId);$('#purchaseBillDate').value=today();$('#purchaseBillDueDate').value=plusDays(30);$('#purchaseBillItems').innerHTML='';addPurchaseItem(materialId);closeSheets();openSheet('#purchaseBillSheet')
+  $('#purchaseBillForm').reset();$('#purchaseMode').value=mode;fillPurchaseBillSuppliers(supplierId);$('#purchaseBillDate').value=today();$('#purchaseBillDueDate').value=mode==='cash'?today():plusDays(30);$('#purchaseDueDateWrap').classList.toggle('hidden',mode==='cash');$('#purchaseAccountWrap').classList.toggle('hidden',mode!=='cash');$('#purchasePaymentAccount').required=mode==='cash';$('#purchaseBillSheetTitle').textContent=mode==='cash'?'Cash purchase':'Credit purchase';$('#savePurchaseBillBtn').textContent=mode==='cash'?'Pay & receive stock':'Post credit purchase';if(mode==='cash'){const accounts=state.paymentAccounts.filter(a=>a.active);if(!accounts.length){toast('Add an active cash or bank account first.');openPaymentAccount();return}$('#purchasePaymentAccount').innerHTML=accounts.map(a=>`<option value="${a.id}">${esc(a.name)} — ${money(paymentAccountBalance(a))}</option>`).join('');$('#purchaseAccountBalance').textContent=`Available: ${money(paymentAccountBalance(accounts[0]))}`}$('#purchaseBillItems').innerHTML='';addPurchaseItem(materialId);closeSheets();openSheet('#purchaseBillSheet')
 }
 
 function purchaseBillDocumentHtml(bill){
@@ -55,7 +55,7 @@ async function createPurchaseBillLocal(items){
 }
 
 document.addEventListener('click',e=>{
-  const action=e.target.closest('[data-action]')?.dataset.action;if(action==='new-supplier')openSupplier();if(action==='new-purchase-bill')openPurchaseBill();
+  const action=e.target.closest('[data-action]')?.dataset.action;if(action==='new-supplier')openSupplier();if(action==='new-purchase-bill')openPurchaseBill('','','credit');if(action==='new-cash-purchase')openPurchaseBill('','','cash');
   const edit=e.target.closest('[data-edit-supplier]');if(edit)openSupplier(edit.dataset.editSupplier);
   const supplierBill=e.target.closest('[data-supplier-bill]');if(supplierBill)openPurchaseBill('',supplierBill.dataset.supplierBill);
   const bill=e.target.closest('[data-view-purchase-bill]');if(bill)viewPurchaseBill(bill.dataset.viewPurchaseBill);
@@ -67,6 +67,7 @@ document.addEventListener('click',e=>{
 $('#purchaseSearch').addEventListener('input',renderPurchasing);$('#purchaseStatusFilter').addEventListener('change',renderPurchasing);$('#supplierSearch').addEventListener('input',renderPurchasing);$('#addPurchaseItemBtn').addEventListener('click',()=>addPurchaseItem());$('#printPurchaseBillBtn').addEventListener('click',()=>printSheet('#purchaseBillDetailSheet'));
 $('#payPurchaseBillBtn').addEventListener('click',()=>openPayment('supplier_payment',{purchaseBillId:state.activePurchaseBill?.id}));
 $('#purchaseBillItems').addEventListener('input',updatePurchaseBillTotal);$('#purchaseBillItems').addEventListener('change',e=>{if(e.target.classList.contains('purchase-item-material')){const row=e.target.closest('.purchase-item-row'),material=state.materials.find(m=>m.id===e.target.value),cost=$('.purchase-item-cost',row);if(material&&!Number(cost.value))cost.value=Number(material.default_unit_cost||0).toFixed(2);updatePurchaseBillTotal()}});
+$('#purchasePaymentAccount').addEventListener('change',()=>{const account=state.paymentAccounts.find(a=>a.id===$('#purchasePaymentAccount').value);$('#purchaseAccountBalance').textContent=`Available: ${money(paymentAccountBalance(account))}`});
 
 $('#supplierForm').addEventListener('submit',async e=>{e.preventDefault();const existing=state.suppliers.find(s=>s.id===$('#supplierId').value),row={id:existing?.id||id('sup'),name:$('#supplierName').value.trim(),contact_name:$('#supplierContact').value.trim(),phone:$('#supplierPhone').value.trim(),address:$('#supplierAddress').value.trim(),notes:$('#supplierNotes').value.trim(),active:true,created_at:existing?.created_at||new Date().toISOString()};try{const saved=await store.save('suppliers',row,Boolean(existing)),index=state.suppliers.findIndex(s=>s.id===saved.id);index>=0?state.suppliers[index]=saved:state.suppliers.push(saved);closeSheets();render();navigate('purchases');toast(existing?'Supplier updated.':'Supplier added.')}catch(err){toast(err.message)}});
 
@@ -82,6 +83,10 @@ $('#purchaseBillForm').onsubmit=async e=>{
     let billId;
     if(isCloud){billId=await store.request('/rest/v1/rpc/create_purchase_bill',{method:'POST',body:JSON.stringify({p_supplier_id:$('#purchaseBillSupplier').value,p_bill_date:$('#purchaseBillDate').value,p_due_date:$('#purchaseBillDueDate').value||null,p_supplier_invoice_no:$('#purchaseBillReference').value.trim(),p_notes:$('#purchaseBillNotes').value.trim(),p_items:items})});await store.load()}
     else billId=await createPurchaseBillLocal(items);
-    closeSheets();render();navigate('purchases');toast('Purchase bill posted and stock received.');viewPurchaseBill(billId)
-  }catch(err){toast(err.message)}finally{button.disabled=false;button.textContent='Post bill & receive stock'}
+    if($('#purchaseMode').value==='cash'){
+      const bill=state.purchaseBills.find(b=>b.id===billId),amount=Number(bill?.total_amount||updatePurchaseBillTotal()),input={payment_type:'supplier_payment',payment_date:$('#purchaseBillDate').value,from_account_id:$('#purchasePaymentAccount').value,to_account_id:null,party_id:null,supplier_id:$('#purchaseBillSupplier').value,project_id:null,walk_in_order_id:null,purchase_bill_id:billId,invoice_id:null,description:`Cash purchase ${bill?.bill_number||''}`.trim(),amount,reference:$('#purchaseBillReference').value.trim()||null,notes:$('#purchaseBillNotes').value.trim()||null};
+      if(isCloud){await store.request('/rest/v1/rpc/record_payment',{method:'POST',body:JSON.stringify({p_business_id:state.businessId,p_payment_type:input.payment_type,p_payment_date:input.payment_date,p_from_account_id:input.from_account_id,p_to_account_id:null,p_party_id:null,p_supplier_id:input.supplier_id,p_project_id:null,p_walk_in_order_id:null,p_purchase_bill_id:billId,p_invoice_id:null,p_description:input.description,p_amount:amount,p_reference:input.reference,p_notes:input.notes})});await store.load()}else{await recordPaymentLocal(input);bill.amount_paid=amount;bill.payment_status='Paid'}
+    }
+    closeSheets();render();navigate('purchases');toast($('#purchaseMode').value==='cash'?'Cash purchase paid and stock received.':'Credit purchase posted and stock received.');viewPurchaseBill(billId)
+  }catch(err){toast(err.message)}finally{button.disabled=false;button.textContent=$('#purchaseMode').value==='cash'?'Pay & receive stock':'Post credit purchase'}
 };
