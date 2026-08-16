@@ -1,0 +1,87 @@
+/* Logo palette only: preserves the module14 layout and component design. */
+:root{
+  --forest:#525356;
+  --forest2:#303134;
+  --cream:#f2f0ea;
+  --paper:#fff;
+  --ink:#37383a;
+  --muted:#898985;
+  --line:#e8e4da;
+  --orange:#c59b38;
+  --orange2:#f5ead0;
+  --green:#8f722d;
+  --cyan:#c59b38;
+  --cyan-soft:#f3ead5;
+  --mist:#f7f5ef;
+  --danger:#b65e55;
+  --shadow:0 26px 68px rgba(60,58,50,.14);
+  --shadow-soft:0 14px 36px rgba(60,58,50,.08);
+}
+
+html{background:#eae8e2}
+body{background:linear-gradient(145deg,#ebe9e3,#f7f6f2 48%,#e8e5de);color:var(--ink)}
+.app{background:#f5f4f0;box-shadow:0 30px 90px rgba(61,59,51,.14)}
+.topbar{background:rgba(255,255,255,.94);box-shadow:0 8px 28px rgba(58,56,48,.05)}
+.brand small{color:var(--muted)}
+.avatar-btn{background:linear-gradient(145deg,#d4ae50,#b88724);box-shadow:0 8px 22px rgba(150,112,29,.25)}
+
+.welcome-row{background:linear-gradient(135deg,#caa142,#aa7f25);box-shadow:0 22px 55px rgba(144,107,27,.2)}
+.eyebrow{color:#9f761c}
+.welcome-row .eyebrow,.welcome-row .muted{color:rgba(255,255,255,.82)}
+
+.btn.primary{background:linear-gradient(145deg,#d0a744,#bd8f2b);box-shadow:0 12px 25px rgba(157,117,27,.24)}
+.btn.primary:hover{background:#b88b2a}
+.btn.soft,.text-btn,.quick-btn.edit{background:#f3ead5;color:#6d5725}
+.quick-btn.view,.project-view-btn{background:#525356;color:#fff}
+.quick-btn.receipt{background:#f6ecd4;color:#896a23}
+
+.summary-card.forest,.inventory-summary article:first-child,.purchase-summary article:first-child,.order-summary article:first-child,.payment-summary article:first-child,.report-summary-card.primary{
+  background:linear-gradient(145deg,#caa142,#aa7f25);color:#fff
+}
+.summary-card:nth-child(3){background:#f5edd9}
+.status.pending,.status.partly-paid{background:#f8edcf;color:#8b681b}
+.status.approved,.status.paid,.status.posted,.status.delivered{background:#f1ead8;color:#765d25}
+.status.cancelled,.status.unpaid,.status.rejected{background:#f7e2df;color:#a6534c}
+.status.sent,.status.in-progress{background:#e9e8e3;color:#58595b}
+
+.quote-type-tabs,.operation-tabs,.report-tabs,.settings-tabs,.purchase-tabs{background:#e8e6e0}
+.quote-type-tabs button.active,.operation-tabs button.active,.report-tabs button.active,.settings-tabs button.active{background:#525356;color:#fff}
+.purchase-tabs button.active{color:#765d25}
+.search span{color:#9b741d}
+input:focus,select:focus,textarea:focus{border-color:#c9a44f;box-shadow:0 0 0 4px rgba(197,155,56,.16)}
+.settings-directory i{color:#c59b38}
+.payment-account-icon,.operation-icon,.team-avatar,.settings-directory>button>span,.dashboard-quick-actions span,.activity-icon{background:#f3ead5;color:#775e24}
+.operation-icon.material,.operation-icon.labour{background:#f3ead5;color:#775e24}.operation-icon.expense{background:#f7e2df;color:#a6534c}
+.dashboard-money-card:before{background:#c59b38}.dashboard-money-card.payable:before{background:#525356}.dashboard-money-card.cash:before{background:#b6923a}.dashboard-money-card.profit:before{background:#7e7f82}
+.dashboard-alert-icon{background:#f3ead5;color:#775e24}.dashboard-alert.warning .dashboard-alert-icon{background:#f8edcf;color:#8b681b}
+.payment-row.incoming .payment-row-icon{background:#f1ead8;color:#765d25}
+.payment-row.transfer .payment-row-icon{background:#f5ead0;color:#987221}
+.payment-row.incoming .payment-row-side b,.report-summary-card.good strong{color:#8f722d}
+.stock-pill,.movement-sign.in,.entry-row.scope_increase .entry-kind,.entry-row.receipt .entry-kind{background:#f3ead5;color:#775e24}
+.status.ready{background:#f5ead0;color:#80631f}
+.btn.scope-add{background:#f3ead5;color:#775e24}
+.account-ledger-head,.assignment-total,.payment-document-amount,.bill-total,.invoice-total,.price-box{background:linear-gradient(145deg,#5a5b5e,#36373a)}
+.report-margin span{background:linear-gradient(90deg,#525356,#c59b38)}
+.choice.selected,.approval-choice:has(input:checked){border-color:#c59b38;background:#f7eed7}
+.steps button.active{background:#c59b38}
+.module-status span{background:#f3ead5;color:#775e24}
+.doc-head{border-color:#c59b38}
+
+.bottom-nav button.active{background:#f5ead0;color:#82651f}
+.fab{border-color:#f5f4f0;background:#c59b38;box-shadow:0 13px 28px rgba(151,113,27,.3)}
+.login-screen{background:radial-gradient(circle at 22% 10%,#65666a,transparent 34%),linear-gradient(145deg,#292a2c,#4c4d50)}
+.opening-splash{background:#f7f6f2}
+
+@media(min-width:1050px){
+  .bottom-nav{background:linear-gradient(180deg,#525356,#303134)}
+  .bottom-nav button{color:rgba(255,255,255,.76)}
+  .bottom-nav button.active{background:#f5ead0;color:#795e1f}
+}
+
+@media(max-width:700px){
+  html,body,.app{background:#f5f4f0}
+  .topbar{background:rgba(255,255,255,.95)}
+  .fab{border-color:#f5f4f0}
+}
+
+@media print{.price-box,.invoice-total,.bill-total,.payment-document-amount{background:#525356!important}}
