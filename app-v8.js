@@ -8,9 +8,26 @@ const isOwner=()=>state.memberRole==='owner';
 const titleRole=role=>({owner:'Owner',manager:'Manager',staff:'Staff',viewer:'Viewer'}[role]||role);
 
 function businessPrintCaption(){
-  const business=state.business||{},contact=[business.phone,business.email,business.address].filter(Boolean).join(' · ');
-  return contact||'Crafted woodwork for homes and businesses';
+  const business=state.business||{},contact=['WhatsApp: 03024441235','Akbar Road Basti Iqbalnagar, Near Potato Society, Okara',business.email].filter(Boolean);
+  return contact.join(' · ');
 }
+
+function safePdfName(value){return String(value||today()).trim().replace(/[^a-z0-9_-]+/gi,'-').replace(/^-+|-+$/g,'').toLowerCase()}
+async function downloadPreviewPdf(selector,filename,orientation='portrait',button=null){
+  const documentNode=$(selector);if(!documentNode)return;
+  if(typeof html2pdf==='undefined'){toast('PDF download is unavailable. Check your internet connection and refresh the app.');return}
+  const oldText=button?.textContent;if(button){button.disabled=true;button.textContent='Preparing PDF…'}
+  try{
+    await html2pdf().set({margin:[8,8,8,8],filename,image:{type:'jpeg',quality:.98},html2canvas:{scale:2,useCORS:true,backgroundColor:'#ffffff',logging:false},jsPDF:{unit:'mm',format:'a4',orientation},pagebreak:{mode:['css','legacy'],avoid:['.doc-head','.doc-title','.doc-box','.metric','tr']}}).from(documentNode).save();
+    toast('PDF downloaded.');
+  }catch(error){console.error(error);toast('Could not download the PDF. Please use Print / Save PDF instead.')}finally{if(button){button.disabled=false;button.textContent=oldText}}
+}
+
+$('#downloadProjectBtn').addEventListener('click',()=>downloadPreviewPdf('#projectDocument',`quotation-${safePdfName(state.activeProject?.project_number)}.pdf`,'portrait',$('#downloadProjectBtn')));
+$('#downloadInvoiceBtn').addEventListener('click',()=>downloadPreviewPdf('#invoiceDocument',`invoice-${safePdfName(state.activeInvoice?.invoice_number)}.pdf`,'portrait',$('#downloadInvoiceBtn')));
+$('#downloadPurchaseBillBtn').addEventListener('click',()=>downloadPreviewPdf('#purchaseBillDocument',`purchase-bill-${safePdfName(state.activePurchaseBill?.bill_number)}.pdf`,'portrait',$('#downloadPurchaseBillBtn')));
+$('#downloadWalkInOrderBtn').addEventListener('click',()=>downloadPreviewPdf('#walkInOrderDocument',`customer-order-${safePdfName(state.activeWalkInOrder?.order_number)}.pdf`,'portrait',$('#downloadWalkInOrderBtn')));
+$('#downloadPaymentBtn').addEventListener('click',()=>downloadPreviewPdf('#paymentDocument',`payment-${safePdfName(state.activePayment?.payment_number)}.pdf`,'portrait',$('#downloadPaymentBtn')));
 
 function dashboardFinancialValues(){
   const projects=state.projects.filter(p=>p.status==='Approved'),orders=state.walkInOrders.filter(o=>o.status!=='Cancelled'),receivable=projects.reduce((sum,p)=>sum+Math.max(0,projectMetrics(p).balance),0)+orders.reduce((sum,o)=>sum+Math.max(0,walkInMetrics(o).balance),0),payable=state.purchaseBills.filter(b=>b.status!=='Cancelled').reduce((sum,b)=>sum+purchaseBalance(b),0),cash=state.paymentAccounts.reduce((sum,a)=>sum+paymentAccountBalance(a),0),jobProfit=projects.reduce((sum,p)=>sum+projectMetrics(p).profit,0)+orders.reduce((sum,o)=>sum+walkInMetrics(o).profit,0),otherIncome=state.payments.filter(p=>p.payment_type==='income').reduce((sum,p)=>sum+Number(p.amount||0),0),expenses=state.payments.filter(p=>p.payment_type==='expense').reduce((sum,p)=>sum+Number(p.amount||0),0);
