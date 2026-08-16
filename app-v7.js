@@ -1,5 +1,5 @@
 // Reports and profitability module
-let reportTab='profitability';
+let reportTab='projectbilling';
 
 const reportNum=value=>Number(value||0);
 const reportDateOk=value=>{const from=$('#reportFrom').value,to=$('#reportTo').value,date=String(value||'');return(!from||date>=from)&&(!to||date<=to)};
@@ -36,7 +36,7 @@ function fillReportFilters(){
 }
 
 function setReportFilterVisibility(){
-  const shown={profitability:['From','To','Project','Party'],cashflow:['From','To','Project','Party','Supplier','Account'],receivables:['From','To','Project','Party'],payables:['From','To','Supplier']}[reportTab];
+  const shown={projectbilling:['From','To','Project','Party'],projectprofit:['From','To','Project','Party'],materialusage:['From','To'],profitability:['From','To','Project','Party'],cashflow:['From','To','Project','Party','Supplier','Account'],receivables:['From','To','Project','Party'],payables:['From','To','Supplier']}[reportTab];
   ['From','To','Project','Party','Supplier','Account'].forEach(name=>$(`#report${name}Wrap`).classList.toggle('hidden',!shown.includes(name)));
 }
 
@@ -47,9 +47,31 @@ function reportJobCard(row,mode){
 
 function renderProfitability(){
   const rows=reportJobRows(),revenue=rows.reduce((s,r)=>s+r.revenue,0),costs=rows.reduce((s,r)=>s+r.costs,0),gross=revenue-costs;
-  const payments=reportPaymentRows(),otherIncome=payments.filter(p=>p.payment_type==='income').reduce((s,p)=>s+reportNum(p.amount),0),businessExpenses=payments.filter(p=>p.payment_type==='expense').reduce((s,p)=>s+reportNum(p.amount),0),net=gross+otherIncome-businessExpenses,margin=revenue?net/revenue*100:0;
+  const payments=reportPaymentRows(),otherIncome=payments.filter(p=>p.payment_type==='income').reduce((s,p)=>s+reportNum(p.amount),0),businessExpenses=payments.filter(p=>p.payment_type==='expense'&&!p.project_id&&!p.walk_in_order_id).reduce((s,p)=>s+reportNum(p.amount),0),net=gross+otherIncome-businessExpenses,margin=revenue?net/revenue*100:0;
   $('#reportSummary').innerHTML=reportSummaryCard('Sales value',money(revenue),`${rows.length} approved job${rows.length===1?'':'s'}`,'primary')+reportSummaryCard('Direct job costs',money(costs),'Materials, labour and project expenses')+reportSummaryCard('Estimated gross profit',money(gross),'Sales less direct job costs',gross<0?'negative':'good')+reportSummaryCard('Estimated net profit',money(net),`${margin.toFixed(1)}% net margin`,net<0?'negative':'good');
   $('#reportContent').innerHTML=rows.length?`<div class="report-section-title"><div><p class="eyebrow">JOB PROFITABILITY</p><h2>Projects and orders</h2></div><span>Purchases become cost when material is assigned to a job.</span></div><div class="report-card-grid">${rows.map(row=>reportJobCard(row,'profitability')).join('')}</div>`:reportEmpty('No profitability data','Approve a project or add a walk-in order in this date range.');
+}
+
+function projectReportRows(){return reportJobRows().filter(row=>row.kind==='project')}
+function renderProjectBilling(){
+  const rows=projectReportRows().map(row=>{const invoice=state.invoices.filter(i=>i.project_id===row.id).reduce((s,i)=>s+reportNum(i.amount),0);return{...row,invoice}}),invoiced=rows.reduce((s,r)=>s+r.invoice,0),received=rows.reduce((s,r)=>s+r.received,0),balance=Math.max(0,invoiced-received);
+  $('#reportSummary').innerHTML=reportSummaryCard('Project invoices',money(invoiced),`${rows.length} approved project${rows.length===1?'':'s'}`,'primary')+reportSummaryCard('Receipts',money(received),'Customer payments recorded','good')+reportSummaryCard('Invoice balance',money(balance),'Invoices less receipts',balance?'negative':'good');
+  $('#reportContent').innerHTML=rows.length?`<div class="report-section-title"><div><p class="eyebrow">PROJECT BILLING</p><h2>Invoices and receipts</h2></div><span>Two-column project comparison</span></div><table class="report-two-column"><thead><tr><th>Project</th><th>Invoice</th><th>Receipts</th></tr></thead><tbody>${rows.map(r=>`<tr><td><b>${esc(r.name)}</b><small>${esc(r.number)} · ${esc(r.party)}</small></td><td>${money(r.invoice)}</td><td>${money(r.received)}</td></tr>`).join('')}</tbody></table>`:reportEmpty('No project billing data','Approve a project and generate its invoice to begin.');
+}
+
+function renderProjectProfitability(){
+  const rows=projectReportRows(),revenue=rows.reduce((s,r)=>s+r.revenue,0),costs=rows.reduce((s,r)=>s+r.costs,0),profit=revenue-costs,margin=revenue?profit/revenue*100:0;
+  $('#reportSummary').innerHTML=reportSummaryCard('Approved project value',money(revenue),`${rows.length} project${rows.length===1?'':'s'}`,'primary')+reportSummaryCard('Materials',money(rows.reduce((s,r)=>s+r.materials,0)),'Assigned stock cost')+reportSummaryCard('Labour & expenses',money(rows.reduce((s,r)=>s+r.labour+r.expenses,0)),'Direct project costs')+reportSummaryCard('Estimated profit',money(profit),`${margin.toFixed(1)}% margin`,profit<0?'negative':'good');
+  $('#reportContent').innerHTML=rows.length?`<div class="report-section-title"><div><p class="eyebrow">PROJECT PROFITABILITY</p><h2>Profit by project</h2></div><span>Approved amount less material, labour and project expenses</span></div><div class="report-card-grid">${rows.map(row=>reportJobCard(row,'profitability')).join('')}</div>`:reportEmpty('No project profitability data','Approve a project to see its profitability.');
+}
+
+function materialUsageRows(){
+  return state.materials.map(material=>{const movements=state.materialMovements.filter(m=>m.material_id===material.id&&reportDateOk(m.movement_date)),purchases=movements.filter(m=>m.movement_type==='purchase'),assigned=movements.filter(m=>['project_issue','walk_in_issue'].includes(m.movement_type));return{material,purchasedQty:purchases.reduce((s,m)=>s+reportNum(m.quantity),0),purchasedValue:purchases.reduce((s,m)=>s+reportNum(m.quantity)*reportNum(m.unit_cost),0),assignedQty:assigned.reduce((s,m)=>s+reportNum(m.quantity),0),assignedValue:assigned.reduce((s,m)=>s+reportNum(m.quantity)*reportNum(m.unit_cost),0)}}).filter(r=>r.purchasedQty||r.assignedQty);
+}
+function renderMaterialUsage(){
+  const rows=materialUsageRows(),purchased=rows.reduce((s,r)=>s+r.purchasedValue,0),assigned=rows.reduce((s,r)=>s+r.assignedValue,0);
+  $('#reportSummary').innerHTML=reportSummaryCard('Material purchases',money(purchased),`${rows.length} material${rows.length===1?'':'s'}`,'primary')+reportSummaryCard('Materials assigned',money(assigned),'Projects and orders')+reportSummaryCard('Unassigned value',money(Math.max(0,purchased-assigned)),'Purchase value less assigned value');
+  $('#reportContent').innerHTML=rows.length?`<div class="report-section-title"><div><p class="eyebrow">MATERIAL MOVEMENT</p><h2>Purchased and assigned</h2></div><span>Two-column comparison for each material</span></div><table class="report-two-column"><thead><tr><th>Material</th><th>Purchased</th><th>Assigned</th></tr></thead><tbody>${rows.map(r=>`<tr><td><b>${esc(r.material.name)}</b><small>${esc(r.material.category||'Uncategorized')}</small></td><td><b>${qty(r.purchasedQty)} ${esc(r.material.unit)}</b><small>${money(r.purchasedValue)}</small></td><td><b>${qty(r.assignedQty)} ${esc(r.material.unit)}</b><small>${money(r.assignedValue)}</small></td></tr>`).join('')}</tbody></table>`:reportEmpty('No material movement','Record purchases or assign materials in this date range.');
 }
 
 function renderCashflow(){
@@ -75,10 +97,13 @@ function renderPayables(){
 
 function renderReports(){
   if(!$('#reportsView'))return;fillReportFilters();setReportFilterVisibility();$$('[data-report-tab]').forEach(button=>button.classList.toggle('active',button.dataset.reportTab===reportTab));
-  if(reportTab==='profitability')renderProfitability();if(reportTab==='cashflow')renderCashflow();if(reportTab==='receivables')renderReceivables();if(reportTab==='payables')renderPayables();
+  if(reportTab==='projectbilling')renderProjectBilling();if(reportTab==='projectprofit')renderProjectProfitability();if(reportTab==='materialusage')renderMaterialUsage();if(reportTab==='profitability')renderProfitability();if(reportTab==='cashflow')renderCashflow();if(reportTab==='receivables')renderReceivables();if(reportTab==='payables')renderPayables();
 }
 
 function reportCsvRows(){
+  if(reportTab==='projectbilling')return [['Project','Invoice','Receipts'],...projectReportRows().map(r=>[`${r.number} - ${r.name}`,state.invoices.filter(i=>i.project_id===r.id).reduce((s,i)=>s+reportNum(i.amount),0),r.received])];
+  if(reportTab==='materialusage')return [['Material','Purchased','Assigned'],...materialUsageRows().map(r=>[r.material.name,`${qty(r.purchasedQty)} ${r.material.unit} / ${money(r.purchasedValue)}`,`${qty(r.assignedQty)} ${r.material.unit} / ${money(r.assignedValue)}`])];
+  if(reportTab==='projectprofit')return [['Number','Project','Party','Date','Sales','Material','Labour','Expenses','Total cost','Estimated profit','Received','Balance'],...projectReportRows().map(r=>[r.number,r.name,r.party,r.date,r.revenue,r.materials,r.labour,r.expenses,r.costs,r.profit,r.received,r.balance])];
   if(reportTab==='profitability'||reportTab==='receivables')return [['Number','Type','Project / order','Party','Date','Sales','Material','Labour','Expenses','Total cost','Estimated profit','Received','Balance'],...reportJobRows().map(r=>[r.number,r.kind==='project'?'Project':'Walk-in order',r.name,r.party,r.date,r.revenue,r.materials,r.labour,r.expenses,r.costs,r.profit,r.received,r.balance])];
   if(reportTab==='cashflow')return [['Number','Date','Type','Description','Target','From account','To account','Amount'],...reportPaymentRows().map(p=>[p.payment_number,p.payment_date,paymentTypeLabel(p.payment_type),p.description,paymentTargetName(p),paymentAccountName(p.from_account_id),paymentAccountName(p.to_account_id),p.amount])];
   return [['Bill number','Supplier','Bill date','Due date','Bill amount','Paid','Balance'],...reportPayableRows().map(b=>[b.bill_number,supplierName(b.supplier_id),b.bill_date,b.due_date,b.total_amount,b.amount_paid,purchaseBalance(b)])];
@@ -90,7 +115,7 @@ function exportReportCsv(){
 
 function reportPrintTable(){const rows=reportCsvRows(),head=rows.shift()||[];return `<table class="report-print-table"><thead><tr>${head.map(cell=>`<th>${esc(cell)}</th>`).join('')}</tr></thead><tbody>${rows.map(row=>`<tr>${row.map((cell,index)=>`<td class="${index>=5?'number':''}">${typeof cell==='number'?money(cell):esc(cell)}</td>`).join('')}</tr>`).join('')}</tbody></table>`}
 function prepareCurrentReport(){
-  renderReports();const title={profitability:'Profitability report',cashflow:'Cash flow report',receivables:'Customer receivables report',payables:'Supplier payables report'}[reportTab],from=$('#reportFrom').value,to=$('#reportTo').value,range=from||to?`${from?prettyDate(from):'Beginning'} to ${to?prettyDate(to):'Today'}`:'All time';
+  renderReports();const title={projectbilling:'Project invoices and receipts',projectprofit:'Project profitability report',materialusage:'Material purchases and assignments',profitability:'Profitability report',cashflow:'Cash flow report',receivables:'Customer receivables report',payables:'Supplier payables report'}[reportTab],from=$('#reportFrom').value,to=$('#reportTo').value,range=from||to?`${from?prettyDate(from):'Beginning'} to ${to?prettyDate(to):'Today'}`:'All time';
   $('#reportPrintDocument').innerHTML=`<div class="doc-head"><div class="doc-brand"><img class="doc-logo" src="assets/mughal-logo.png?v=2" alt="Mughal Interior"><p>${esc(businessPrintCaption())}</p></div><div class="doc-meta"><b>${esc(title)}</b><p>Period: ${esc(range)}</p><p>Generated: ${prettyDate(today())}</p></div></div><div class="doc-title"><p class="eyebrow">BUSINESS REPORT</p><h1>${esc(title)}</h1></div><div class="report-print-summary">${$('#reportSummary').innerHTML}</div>${reportPrintTable()}`;
   return title;
 }
