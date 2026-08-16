@@ -6,7 +6,7 @@ function walkInMetrics(order){
 }
 
 function walkInOrderCard(order){
-  const m=walkInMetrics(order),open=!['Delivered','Cancelled'].includes(order.status);
+  const m=walkInMetrics(order),open=!['Pending','Delivered','Cancelled'].includes(order.status);
   return `<article class="item-card project-card walk-in-card"><div class="project-card-head"><div><div class="project-card-number">${esc(order.order_number)}</div><h3>${esc(order.title)}</h3><div class="walk-in-customer"><span>${esc(order.customer_name)}</span>${order.customer_phone?`<span>${esc(order.customer_phone)}</span>`:''}<span>Promised ${prettyDate(order.promised_date)}</span></div></div><span class="status ${statusClass(order.status)}">${esc(order.status)}</span></div><div class="project-card-info"><div><span>Order amount</span><b>${money(order.amount)}</b></div><div><span>Received</span><b>${money(m.receipts)}</b></div><div><span>Balance</span><b class="${m.balance>0?'order-balance':''}">${money(m.balance)}</b></div><div><span>Estimated profit</span><b>${money(m.profit)}</b></div></div><div class="project-card-actions"><button class="quick-btn view" data-view-walk-in="${order.id}">View</button>${open?`<button class="quick-btn receipt" data-walk-in-entry="receipt" data-walk-in-id="${order.id}">Add receipt</button><button class="quick-btn" data-walk-in-material="${order.id}">Assign material</button><button class="quick-btn" data-walk-in-entry="labour" data-walk-in-id="${order.id}">Add labour</button><button class="quick-btn" data-walk-in-entry="expense" data-walk-in-id="${order.id}">Add expense</button>`:''}</div></article>`;
 }
 
@@ -14,7 +14,7 @@ function renderWalkInOrders(){
   const search=$('#walkInOrderSearch'),filter=$('#walkInOrderStatusFilter');
   if(!search||!filter)return;
   const query=search.value.toLowerCase(),status=filter.value,rows=state.walkInOrders.filter(order=>(status==='all'||order.status===status)&&[order.order_number,order.title,order.customer_name,order.customer_phone,order.description].join(' ').toLowerCase().includes(query));
-  const active=state.walkInOrders.filter(o=>o.status!=='Cancelled'),totals=active.map(o=>({o,m:walkInMetrics(o)}));
+  const active=state.walkInOrders.filter(o=>!['Pending','Cancelled'].includes(o.status)),totals=active.map(o=>({o,m:walkInMetrics(o)}));
   $('#walkInOrderValue').textContent=money(totals.reduce((n,x)=>n+Number(x.o.amount||0),0));
   $('#walkInOrderDue').textContent=money(totals.reduce((n,x)=>n+Math.max(0,x.m.balance),0));
   $('#walkInOrderOpen').textContent=active.filter(o=>o.status!=='Delivered').length;
