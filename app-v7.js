@@ -9,7 +9,7 @@ const reportSummaryCard=(label,value,note='',tone='')=>`<article class="report-s
 function reportJobRows(){
   const projectFilter=$('#reportProjectFilter').value,partyFilter=$('#reportPartyFilter').value;
   const projects=state.projects.filter(p=>p.status==='Approved').map(p=>{const m=projectMetrics(p);return{kind:'project',id:p.id,number:p.project_number,name:p.name,partyId:p.party_id,party:partyName(p.party_id),date:p.quote_date,status:p.status,revenue:m.revised,materials:m.materials,labour:m.labour,expenses:m.expenses,costs:m.costs,profit:m.profit,received:m.receipts,balance:m.balance}});
-  const orders=state.walkInOrders.filter(o=>o.status!=='Cancelled').map(o=>{const m=walkInMetrics(o);return{kind:'walkin',id:o.id,number:o.order_number,name:o.title,partyId:o.party_id,party:o.customer_name,date:o.order_date,status:o.status,revenue:reportNum(o.amount),materials:m.materials,labour:m.labour,expenses:m.expenses,costs:m.costs,profit:m.profit,received:m.receipts,balance:m.balance}});
+  const orders=state.walkInOrders.filter(o=>!['Pending','Cancelled'].includes(o.status)).map(o=>{const m=walkInMetrics(o);return{kind:'walkin',id:o.id,number:o.order_number,name:o.title,partyId:o.party_id,party:o.customer_name,date:o.order_date,status:o.status,revenue:reportNum(o.amount),materials:m.materials,labour:m.labour,expenses:m.expenses,costs:m.costs,profit:m.profit,received:m.receipts,balance:m.balance}});
   return [...projects,...orders].filter(row=>(projectFilter==='all'||projectFilter===`${row.kind}:${row.id}`)&&(partyFilter==='all'||row.partyId===partyFilter)&&reportDateOk(row.date)).sort((a,b)=>String(b.date).localeCompare(String(a.date)));
 }
 
