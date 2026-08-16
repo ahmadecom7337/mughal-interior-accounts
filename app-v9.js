@@ -2,7 +2,7 @@
 let operationTab='receipts';
 
 const activeProjects=()=>state.projects.filter(p=>p.status==='Approved');
-const activeOrders=()=>state.walkInOrders.filter(o=>o.status!=='Cancelled');
+const activeOrders=()=>state.walkInOrders.filter(o=>!['Pending','Cancelled'].includes(o.status));
 const activeAccounts=()=>state.paymentAccounts.filter(a=>a.active!==false);
 const labourerName=id=>state.labourers.find(l=>l.id===id)?.name||'Unknown labour person';
 const operationTargetName=(type,id)=>type==='project'?(state.projects.find(p=>p.id===id)?.name||'Unknown project'):(state.walkInOrders.find(o=>o.id===id)?.title||'Unknown order');
@@ -20,7 +20,7 @@ function walkInOrderCard(order){
 
 function materialCard(material){
   const m=materialMetrics(material);
-  return `<article class="material-card ${m.low?'low':''}"><div class="material-head"><div><h3>${esc(material.name)}</h3><small>${esc(material.category||'Uncategorized')}${material.sku?` · ${esc(material.sku)}`:''}</small></div><span class="stock-pill">${m.low?'Low stock':'In stock'}</span></div><div class="material-stats"><div><span>Available</span><b>${qty(m.stock)} ${esc(material.unit)}</b></div><div><span>Avg. cost</span><b>${money(m.average)}</b></div><div><span>Stock value</span><b>${money(m.value)}</b></div></div><div class="material-actions clean-actions"><button class="quick-btn view" data-view-material="${material.id}">View ledger</button><button class="quick-btn edit" data-edit-material-card="${material.id}">Edit material</button><button class="quick-btn receipt" data-purchase-material="${material.id}">+ Purchase</button></div></article>`;
+  return `<article class="material-card ${m.low?'low':''}"><div class="material-head"><div><h3>${esc(material.name)}</h3><small>${esc(material.category||'Uncategorized')}${material.sku?` · ${esc(material.sku)}`:''}</small></div><span class="stock-pill">${m.low?'Low stock':'In stock'}</span></div><div class="material-stats"><div><span>Available</span><b>${qty(m.stock)} ${esc(material.unit)}</b></div><div><span>Avg. cost</span><b>${money(m.average)}</b></div><div><span>Stock value</span><b>${money(m.value)}</b></div></div><div class="material-actions clean-actions"><button class="quick-btn view" data-view-material="${material.id}">View</button><button class="quick-btn edit" data-edit-material-card="${material.id}">Edit</button></div></article>`;
 }
 
 function operationPaymentRow(payment){
@@ -49,7 +49,7 @@ function renderOperations(){
   $('#operationMaterialList').innerHTML=assignments.length?assignments.slice(0,50).map(materialAssignmentRow).join(''):reportEmpty('No materials assigned','Assign inventory to an approved project or active order.');
 }
 
-function showOperationTab(tab){operationTab=tab;navigate('operations');renderOperations()}
+function showOperationTab(tab){operationTab=tab;navigate(tab==='labour'?'labour':tab==='materials'?'materials':tab==='expenses'?'banking':'invoices');renderOperations()}
 function fillJobTarget(select,type,selected=''){
   const rows=type==='project'?activeProjects():activeOrders();select.innerHTML=`<option value="">Select ${type}</option>`+rows.map(row=>`<option value="${row.id}">${esc(type==='project'?`${row.name} — ${partyName(row.party_id)}`:`${row.title} — ${row.customer_name}`)}</option>`).join('');if(selected)select.value=selected;return rows;
 }
