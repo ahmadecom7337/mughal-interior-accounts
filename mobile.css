@@ -84,6 +84,13 @@ main{padding:2px 17px 30px}
 .record-card .view-button{min-width:68px;min-height:36px;padding:0 13px;border:0;border-radius:12px;background:var(--ink-2);color:#fff;font-size:11px;font-weight:780}
 .status{display:inline-block;margin-bottom:6px;padding:5px 8px;border-radius:9px;background:#e9eae9;color:#5f625f;font-size:9px;font-weight:800}
 .status.approved{background:#dfe9e3;color:#315844}
+.status.pending{background:#fff0cb;color:#7b5514}
+.status.closed{background:#f2dfe1;color:#8a3440}
+.status.active{background:#dfe9e3;color:#315844}
+.status.wage-due,.wage-due{background:#fde5e2;color:#9b352e}
+.status.advance-credit,.advance-credit{background:#def0e7;color:#276248}
+.wage-due-text{color:#a23c35!important;font-weight:760}
+.advance-credit-text{color:#2b6d50!important;font-weight:760}
 .card-actions{margin-top:12px}
 .spaced-list{margin-top:13px}
 .segmented{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-bottom:14px;padding:5px;border-radius:17px;background:#dfe1df}
@@ -95,6 +102,27 @@ main{padding:2px 17px 30px}
 .field-help{display:block;color:var(--muted);font-size:10px;font-weight:560;line-height:1.4}
 .inline-badge{display:inline-block;padding:5px 8px;border-radius:9px;background:#e4ebe7;color:#315844;font-size:9px;font-weight:800}
 .pdf-logo{width:118px;height:58px;object-fit:contain;margin:0 0 10px;filter:brightness(0) invert(1)}
+.invoice-document{overflow:hidden;padding:0;background:#fff;color:#252525}
+.document-header{display:flex;justify-content:space-between;gap:20px;align-items:flex-start;padding:24px;border-bottom:3px solid #252525}
+.document-header p{margin:0 0 7px;color:#7b7e7b;font-size:10px;font-weight:850;letter-spacing:.1em}
+.document-header h2{margin:0 0 5px;font-size:22px}
+.document-header span{font-size:11px;font-weight:760}
+.document-header img{width:112px;height:67px;object-fit:contain;mix-blend-mode:multiply}
+.document-meta{display:grid;grid-template-columns:1.2fr 1.2fr .75fr;gap:12px;padding:20px 24px;background:#f4f4f2}
+.document-meta div{display:grid;align-content:start;gap:4px}
+.document-meta small{color:#858885;font-size:8px;font-weight:850;letter-spacing:.08em}
+.document-meta b{font-size:11px}
+.document-meta span{color:#696c69;font-size:9px}
+.document-table{margin:24px;border:1px solid #dfe0de;border-radius:12px;overflow:hidden}
+.document-table-head,.document-table-row{display:grid;grid-template-columns:.8fr 1.7fr .8fr;gap:10px;align-items:start;padding:12px}
+.document-table-head{background:#252525;color:#fff;font-size:9px;font-weight:850;text-transform:uppercase}
+.document-table-row{min-height:48px;border-top:1px solid #e8e9e7;font-size:10px;line-height:1.45}
+.document-table-row strong{text-align:right;white-space:nowrap}
+.document-table-row strong.negative{color:var(--danger)}
+.document-total{display:flex;justify-content:flex-end;gap:28px;padding:15px;background:#f4f4f2;font-size:13px}
+.document-footer{display:grid;gap:12px;margin:0 24px 24px;padding-top:18px;border-top:2px solid #252525}
+.document-footer div{display:grid;grid-template-columns:110px 1fr;gap:12px;font-size:10px;line-height:1.5}
+.document-footer span{white-space:pre-wrap}
 .dual-actions{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:13px}
 .invoice-lines-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:5px}
 .invoice-lines-head b{font-size:13px}
