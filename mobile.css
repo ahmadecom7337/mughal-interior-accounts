@@ -85,6 +85,16 @@ main{padding:2px 17px 30px}
 .status{display:inline-block;margin-bottom:6px;padding:5px 8px;border-radius:9px;background:#e9eae9;color:#5f625f;font-size:9px;font-weight:800}
 .status.approved{background:#dfe9e3;color:#315844}
 .card-actions{margin-top:12px}
+.spaced-list{margin-top:13px}
+.segmented{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-bottom:14px;padding:5px;border-radius:17px;background:#dfe1df}
+.segmented button{min-height:43px;border:0;border-radius:13px;background:transparent;color:#737673;font-size:12px;font-weight:750}
+.segmented button.active{background:#fff;color:var(--ink);box-shadow:0 6px 16px rgba(25,27,26,.08)}
+.subpanel{display:none}
+.subpanel.active{display:block;animation:fade .18s ease}
+.record-total{color:var(--green);font-size:13px;font-weight:820}
+.field-help{display:block;color:var(--muted);font-size:10px;font-weight:560;line-height:1.4}
+.inline-badge{display:inline-block;padding:5px 8px;border-radius:9px;background:#e4ebe7;color:#315844;font-size:9px;font-weight:800}
+.pdf-logo{width:118px;height:58px;object-fit:contain;margin:0 0 10px;filter:brightness(0) invert(1)}
 .empty{padding:30px 18px;text-align:center;color:var(--muted);font-size:12px}
 .empty b{display:block;margin-bottom:5px;color:var(--ink);font-size:14px}
 
