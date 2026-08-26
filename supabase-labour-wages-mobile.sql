@@ -30,6 +30,10 @@ create index if not exists labour_wage_settlements_business_date_idx
   on public.labour_wage_settlements(business_id, settlement_date desc, created_at desc);
 create index if not exists labour_wage_settlements_labourer_idx
   on public.labour_wage_settlements(labourer_id, settlement_date desc);
+create index if not exists labour_wage_settlements_created_by_idx
+  on public.labour_wage_settlements(created_by);
+create index if not exists labour_wage_settlement_items_business_idx
+  on public.labour_wage_settlement_items(business_id);
 create index if not exists labour_wage_settlement_items_settlement_idx
   on public.labour_wage_settlement_items(settlement_id);
 
