@@ -135,6 +135,7 @@ main{padding:2px 17px 30px}
 .wage-line small{margin-top:4px;color:var(--muted);font-size:10px;line-height:1.4}
 .wage-line strong{align-self:center;font-size:12px}
 .wage-summary{margin-top:2px}
+.transfer-direction{width:38px;height:38px;display:grid;place-items:center;margin:-3px auto;border-radius:50%;background:var(--ink-2);color:#fff;font-weight:850}
 
 .backdrop{position:fixed;z-index:50;inset:0;background:rgba(20,22,21,.42);backdrop-filter:blur(5px)}
 .sheet{position:fixed;z-index:55;inset:auto 0 0;max-height:94vh;padding:21px 17px calc(25px + env(safe-area-inset-bottom));overflow:auto;border-radius:28px 28px 0 0;background:#f4f5f4;box-shadow:0 -25px 65px rgba(20,20,18,.22)}
