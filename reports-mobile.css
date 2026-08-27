@@ -1,5 +1,27 @@
 .report-action-grid>button{min-height:122px}
 .report-page-head{margin-bottom:13px}
+.report-date-tools{display:flex;justify-content:flex-end;margin-bottom:10px}
+.report-date-tools .button{min-height:40px;padding:8px 18px;font-size:12px}
+.report-date-tools [aria-pressed="true"]{outline:2px solid #74877b;outline-offset:2px}
+.project-statement{background:#fff;padding:18px 14px;border-radius:16px;color:var(--ink)}
+.statement-heading{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;border-bottom:2px solid #222;padding-bottom:16px;margin-bottom:16px}
+.statement-heading p{font-size:10px;font-weight:750;letter-spacing:.04em;margin:0 0 6px}
+.statement-heading h2{font-size:22px;line-height:1.2;margin:0 0 8px}
+.statement-heading span{font-size:12px;color:#626762}
+.statement-heading img{width:85px;height:60px;object-fit:contain;mix-blend-mode:multiply}
+.statement-parties{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px;overflow-wrap:anywhere}
+.statement-parties small,.statement-parties b,.statement-parties span{display:block}
+.statement-parties small{font-size:9px;letter-spacing:.08em;color:#6b716c;margin-bottom:5px}
+.statement-parties b{font-size:14px;margin-bottom:5px}
+.statement-parties span{font-size:12px;line-height:1.5;white-space:pre-line}
+.project-statement .report-table-wrap{border-radius:0;box-shadow:none;border:1px solid #dfe3df}
+.project-statement .statement-table{min-width:610px;font-size:12px}
+.statement-table th{white-space:normal;font-size:10px;letter-spacing:0;line-height:1.4}
+.statement-table td b{font-size:12px}
+.statement-table td small{font-size:11px;color:#626762;white-space:pre-line;overflow-wrap:anywhere}
+.statement-opening td{background:#f4f6f4}
+.statement-total td{border-top:2px solid #313b34;background:#f4f6f4}
+.statement-note{font-size:11px;color:#626762;line-height:1.5;margin:12px 0 0}
 .report-scope{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;margin-bottom:12px;padding:5px;border-radius:17px;background:#dfe1df}
 .report-scope button{min-height:42px;border:0;border-radius:13px;background:transparent;color:#737673;font-size:11px;font-weight:780}
 .report-scope button.active{background:#fff;color:var(--ink);box-shadow:0 6px 16px rgba(25,27,26,.08)}
@@ -33,4 +55,14 @@
 .report-print-head h1{margin:0 0 5px;font-size:25px}.report-print-head p{margin:2px 0;color:#666;font-size:10px}
 .report-print-document .report-table-wrap{overflow:visible;box-shadow:none;border:1px solid #ddd}
 .report-print-document .report-table{min-width:0;font-size:9px}
+.report-print-document.statement-print{width:730px;padding:18px}
+.statement-print .project-statement{padding:0;border-radius:0}
+.statement-print .statement-table{min-width:0;width:100%;table-layout:fixed;font-size:12px}
+.statement-print .statement-table th:nth-child(1){width:14%}
+.statement-print .statement-table th:nth-child(2){width:30%}
+.statement-print .statement-table th:nth-child(n+3){width:18.666%}
+.statement-print .statement-table td{padding:10px 7px;overflow-wrap:anywhere}
+.statement-print .statement-table .number{white-space:normal}
+.statement-print .statement-table tr,.statement-print .statement-heading,.statement-print .statement-parties{break-inside:avoid}
+.html2pdf__container .report-print-document{position:static;left:auto;top:auto}
 @media(max-width:370px){.report-filters{grid-template-columns:1fr}.report-filters label{grid-column:1/-1}}
