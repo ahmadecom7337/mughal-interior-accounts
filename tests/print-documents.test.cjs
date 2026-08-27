@@ -3,17 +3,19 @@ const {printFixtures}=require('./print-fixtures.cjs');
 function setup(t){const h=printFixtures();t.after(h.close);return h;}
 function documentFor(h,html){const node=h.w.document.createElement('div');node.innerHTML=html;return node;}
 function contact(node){assert.equal(node.querySelectorAll('.business-contact').length,1);assert.match(node.textContent,/Akbar Road Basti Iqbal Nagar,/);assert.match(node.textContent,/Near Potato Society, Okara/);assert.match(node.textContent,/03024441235/);assert.equal(node.querySelector('.business-whatsapp').getAttribute('href'),'https://wa.me/923024441235');assert.equal(node.querySelector('.business-whatsapp img').getAttribute('alt'),'WhatsApp');}
+function brandedHeader(node){assert.match(node.querySelector('.document-header').textContent,/Mughal Interior and Decor/);assert.match(node.querySelector('.document-header').textContent,/Proprietor Ali Raza Mughal/);assert.ok(node.querySelector('.document-header .business-contact'));}
 test('order invoice matches project document header and has correctly ordered table/totals',t=>{
   const h=setup(t),node=documentFor(h,h.order());contact(node);
-  assert.ok(node.querySelector('.invoice-document .document-header'));assert.ok(node.querySelector('.document-header img[src="assets/mughal-logo.png"]'));
+  assert.ok(node.querySelector('.invoice-document .document-header'));assert.ok(node.querySelector('.document-header img[src="assets/mughal-logo.png"]'));brandedHeader(node);
   assert.match(node.querySelector('.document-meta').textContent,/Sample Customer.*ORD-0001/s);
+  assert.match(node.querySelector('.document-meta').textContent,/DATE \/ INVOICE NO\..*INV-0002/s);
   assert.deepEqual(Array.from(node.querySelectorAll('thead th'),x=>x.textContent),['Item / details','Qty','Rate','Amount']);
   assert.equal(node.querySelectorAll('tbody tr').length,2);assert.match(node.querySelector('tbody tr').textContent,/Wooden door/);
   assert.match(node.querySelector('.invoice-grand-total').textContent,/14,500/);assert.match(node.querySelector('dd.negative').textContent,/500/);
   assert.equal(node.querySelector('.detail-hero'),null);assert.doesNotMatch(node.textContent,/Order details/);
 });
 test('project quote and invoice keep contact exactly once and keep negative scope deductions',t=>{
-  const h=setup(t);contact(documentFor(h,h.quote()));const node=documentFor(h,h.project());contact(node);assert.match(node.querySelector('.document-table .negative').textContent,/5,000/);
+  const h=setup(t),quote=documentFor(h,h.quote());contact(quote);brandedHeader(quote);assert.match(quote.querySelector('.document-disclaimer').textContent,/Prices are subject to change until approval and advance payment/);const node=documentFor(h,h.project());contact(node);brandedHeader(node);assert.match(node.querySelector('.document-meta').textContent,/DATE \/ INVOICE NO\..*INV-0001/s);assert.match(node.querySelector('.document-table .negative').textContent,/5,000/);assert.ok(node.querySelector('.document-disclaimer .disclaimer-edit'));
 });
 test('all receipt and purchase print-preview types contain one contact block',t=>{
   const h=setup(t);for(const call of ["viewReceipt('receipt-1')","viewOrderReceipt('order-receipt')","viewPurchasePayment('supplier-payment')","viewPurchase('bill-1')"]){h.run(call);contact(h.w.document.querySelector('#detailBody .pdf-document'));}
@@ -29,7 +31,7 @@ test('order invoice handles blank fields, fractional quantity and escaped detail
 });
 test('the downloadable order invoice contains the same complete branded preview',async t=>{
   const h=setup(t);let exported;
-  h.w.html2pdf=()=>({set(options){this.options=options;return this;},from(node){this.node=node;return this;},async save(){exported=this;}});
+  h.w.html2pdf=()=>({set(options){this.options=options;return this;},from(node){this.node=node;return this;},async save(){this.hadExporting=this.node.classList.contains('pdf-exporting');exported=this;}});
   h.run("viewOrderInvoice('order-1')");await h.run("downloadCurrent(document.querySelector('[data-detail-download]'))");
-  contact(exported.node);assert.equal(exported.options.jsPDF.orientation,'portrait');assert.equal(exported.node,h.w.document.querySelector('#detailBody .pdf-document'));assert.match(exported.options.filename,/INV-0002|inv-0002/);
+  contact(exported.node);assert.equal(exported.hadExporting,true);assert.equal(exported.options.jsPDF.orientation,'portrait');assert.equal(exported.node,h.w.document.querySelector('#detailBody .pdf-document'));assert.match(exported.options.filename,/INV-0002|inv-0002/);
 });

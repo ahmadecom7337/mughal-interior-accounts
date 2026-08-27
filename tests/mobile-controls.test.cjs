@@ -87,8 +87,28 @@ test('multi-day submissions persist correct project and order wages using existi
     assert.equal(h.run('state.labourAssignments[0].labourer_id'),'l1');
   }
 });
-test('supplier/purchase cascading selectors and dynamically added material lines still update',async t=>{
+test('supplier payment shows total supplier balance without selecting a bill',async t=>{
   const h=setup(t);h.run("state.suppliers=[{id:'s1',name:'Sample supplier'}];state.purchaseBills=[{id:'b1',supplier_id:'s1',bill_number:'PUR-1',total_amount:1000,amount_paid:100,status:'Posted'}];openPurchasePayment()");
-  h.open('purchasePaymentSupplier');h.pick('Sample supplier');h.open('purchasePaymentBill');h.pick('PUR-1');assert.match(h.source('purchasePaymentDue').textContent,/900/);
+  h.open('purchasePaymentSupplier');h.pick('Sample supplier');assert.match(h.source('purchasePaymentDue').textContent,/Total outstanding balance.*900/);assert.equal(h.source('purchasePaymentBill'),null);
   h.run('openPurchase();addPurchaseLine()');await new Promise(r=>setImmediate(r));const material=h.d.querySelector('[data-purchase-line-material]');material.parentElement.querySelector('button').click();h.pick('Plywood');assert.equal(material.value,'m1');assert.equal(material.closest('.purchase-line').querySelector('[data-purchase-line-rate]').value,'100');
+});
+test('wage payment accepts a partial amount and leaves the remaining balance due',async t=>{
+  const h=setup(t);h.run("state.labourAssignments=[{id:'a1',labourer_id:'l1',project_id:'project-1',assignment_date:'2026-08-01',days:2,daily_rate:1500,amount:3000,created_at:'2026-08-01T00:00:00Z'}];openPayWages('l1');document.getElementById('payWagesAmount').value='1000';document.getElementById('payWagesAmount').dispatchEvent(new Event('input',{bubbles:true}));document.getElementById('payWagesAccount').value='b1'");
+  const form=h.source('payWagesForm'),submitter=form.querySelector('[type="submit"]');form.dispatchEvent(new h.w.SubmitEvent('submit',{bubbles:true,cancelable:true,submitter}));await new Promise(r=>setImmediate(r));
+  assert.equal(h.run("state.labourWageSettlements[0].gross_wages"),1000);assert.equal(h.run("state.labourWageSettlementItems[0].amount"),1000);assert.equal(h.run("labourUnpaidTotal('l1')"),2000);
+});
+test('charged project and order expenses reduce profit and appear in expense reports',t=>{
+  const h=setup(t);h.run("state.entries.push({id:'expense-p',project_id:'project-1',entry_type:'expense',entry_date:'2026-02-01',description:'Project transport',amount:321});state.walkInEntries.push({id:'expense-o',walk_in_order_id:'o1',entry_type:'expense',entry_date:'2026-02-01',description:'Order fitting',amount:123});");
+  h.d.querySelector('[data-open-report="profit"]').click();const rows=h.d.querySelectorAll('#reportContent tbody tr');assert.match(rows[0].children[4].textContent,/654/);assert.match(rows[1].children[4].textContent,/123/);
+  h.d.querySelector('[data-open-report="expenses"]').click();assert.match(h.source('reportContent').textContent,/Project transport/);assert.match(h.source('reportContent').textContent,/Order fitting/);
+});
+test('Cash appears in the List of Banks by default',t=>{const h=setup(t);h.run("route('bankAccounts')");assert.match(h.source('bankAccountList').textContent,/Cash/);assert.match(h.source('bankAccountList').textContent,/Default cash ledger/);});
+test('editing Cash preserves its account type and requires no bank details',async t=>{
+  const h=setup(t);h.run("openBankAccount('cash')");assert.equal(h.source('bankAccountBank').required,false);assert.equal(h.source('bankAccountBank').closest('label').hidden,true);
+  const form=h.source('bankAccountForm');assert.equal(form.checkValidity(),true);form.dispatchEvent(new h.w.SubmitEvent('submit',{bubbles:true,cancelable:true,submitter:form.querySelector('[type="submit"]')}));await new Promise(r=>setImmediate(r));
+  assert.equal(h.run("account('cash').account_type"),'Cash');h.run("openBankAccount('b1')");assert.equal(h.source('bankAccountBank').required,true);assert.equal(h.source('bankAccountBank').closest('label').hidden,false);
+});
+test('business overheads reduce displayed net profit even without jobs',t=>{
+  const h=setup(t);h.run("state.projects=[];state.walkInOrders=[];state.payments=[{id:'rent',payment_type:'expense',payment_date:'2026-08-01',amount:500}]");h.d.querySelector('[data-open-report="profit"]').click();
+  const rows=h.d.querySelectorAll('#reportContent tbody tr');assert.equal(rows.length,2);assert.match(rows[0].textContent,/Business overheads/);assert.match(rows[1].textContent,/Net profit \/ loss/);assert.match(rows[1].lastElementChild.textContent,/-500/);
 });

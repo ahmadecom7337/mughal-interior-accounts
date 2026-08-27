@@ -1,11 +1,17 @@
 .business-contact{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:18px;padding:16px 24px;border-top:1px solid #e1e5df;background:#fff;color:#334038;break-inside:avoid;page-break-inside:avoid}
 .business-address{margin:0;font-size:11px;line-height:1.65;font-weight:500;overflow-wrap:anywhere}
+.business-address b,.business-address span{display:block}
+.business-address b{color:#202923;font-size:11px;margin-bottom:3px}
 .business-whatsapp{display:flex;align-items:center;justify-content:flex-end;gap:8px;text-decoration:none;color:#23573b;white-space:nowrap}
 .business-whatsapp img{display:block;width:25px;height:25px;flex:none}
 .business-whatsapp span{display:grid;gap:3px}
 .business-whatsapp small{font-size:9px;font-weight:600;color:#5c7263;letter-spacing:.03em}
 .business-whatsapp b{font-size:13px;letter-spacing:.01em;font-variant-numeric:tabular-nums}
-.invoice-document>.business-contact{border-top:0;border-bottom:1px solid #e1e5df}
+.document-header{display:grid;grid-template-columns:minmax(0,1fr) auto;padding:0!important;gap:0!important;align-items:start}
+.document-brand{padding:24px;min-width:0;overflow-wrap:anywhere}
+.document-header>img{margin:20px 24px 0 12px}
+.document-header .business-whatsapp img{width:25px;height:25px;margin:0;mix-blend-mode:normal}
+.document-header>.business-contact{grid-column:1/-1;width:100%;box-sizing:border-box;border-top:1px solid #e1e5df;background:#f8faf7}
 .document-header>div{min-width:0;overflow-wrap:anywhere}
 .document-header img{flex:none}
 .document-meta div{min-width:0;overflow-wrap:anywhere}
@@ -29,12 +35,22 @@
 .report-content>.business-contact{margin-top:14px;border-radius:0 0 14px 14px}
 .report-print-document>.business-contact{margin-top:18px;padding-left:0;padding-right:0}
 .document-header,.document-meta{break-inside:avoid;page-break-inside:avoid}
+.quote-document .document-table-head,.quote-document .document-table-row{grid-template-columns:minmax(0,2.5fr) minmax(78px,.65fr) minmax(92px,.75fr);gap:6px}
+.project-invoice-document .document-table-head,.project-invoice-document .document-table-row{grid-template-columns:minmax(62px,.5fr) minmax(0,2.6fr) minmax(92px,.75fr);gap:7px}
+.document-disclaimer{margin:18px 24px 24px;padding-top:14px;border-top:1px solid #cfd5ce;text-align:center;break-inside:avoid;page-break-inside:avoid}
+.disclaimer-toggle{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:start;gap:10px;cursor:pointer;color:#5b625d;font-size:10px;line-height:1.55}
+.disclaimer-toggle>span:first-child{display:-webkit-box;overflow:hidden;-webkit-box-orient:vertical;-webkit-line-clamp:1;line-clamp:1}
+.document-disclaimer.expanded .disclaimer-toggle>span:first-child,.pdf-exporting .disclaimer-toggle>span:first-child{display:block;overflow:visible}
+.disclaimer-actions{display:flex;align-items:center;gap:7px;white-space:nowrap;color:#717b74;font-size:9px;font-style:normal}
+.disclaimer-edit{display:grid;place-items:center;width:27px;height:27px;border:1px solid #ccd3cd;border-radius:50%;background:#fff;color:#23573b;font-size:15px;cursor:pointer}
+.pdf-exporting .disclaimer-actions{display:none}
 @media(max-width:430px){
   .business-contact{gap:12px;padding:14px 16px}
   .business-address{font-size:10px}
   .business-whatsapp{gap:6px}
   .business-whatsapp b{font-size:12px}
-  .document-header{padding:20px 16px;gap:12px}
+  .document-brand{padding:20px 16px}
+  .document-header>img{margin:16px 16px 0 8px}
   .document-header h2{font-size:20px}
   .document-header img{width:86px;height:58px}
   .document-meta{padding:16px;gap:10px}
@@ -46,4 +62,6 @@
   .business-contact{border-radius:0;print-color-adjust:exact;-webkit-print-color-adjust:exact}
   .business-whatsapp{color:#23573b!important;text-decoration:none!important}
   .order-invoice-table th{print-color-adjust:exact;-webkit-print-color-adjust:exact}
+  .disclaimer-toggle>span:first-child{display:block;overflow:visible}
+  .disclaimer-actions{display:none}
 }
