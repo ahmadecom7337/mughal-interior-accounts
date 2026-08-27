@@ -41,13 +41,13 @@ main{padding:2px 17px 30px}
 .section-title span{font-size:12px;font-weight:700}
 
 .action-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}
-.action-grid>button{min-height:131px;padding:15px;border:0;border-radius:19px;background:linear-gradient(145deg,var(--ink-2),#141615);color:#fff;text-align:left;box-shadow:0 10px 24px rgba(22,24,23,.14);transition:transform .15s ease,filter .15s ease}
-.action-grid>button:nth-child(4n+2),.action-grid>button:nth-child(4n+3){background:linear-gradient(145deg,#354d42,#20332b)}
+.action-grid>button{min-height:131px;padding:15px;border:0;border-radius:19px;background:#fafbf7;color:var(--ink);text-align:left;box-shadow:0 7px 20px rgba(22,24,23,.06);transition:transform .15s ease,filter .15s ease}
+
 .action-grid>button:active{transform:scale(.98);filter:brightness(1.12)}
 .action-grid b,.action-grid small{display:block}
 .action-grid b{margin-top:12px;font-size:14px;font-weight:680}
-.action-grid small{margin-top:4px;color:rgba(255,255,255,.54);font-size:10px}
-.action-icon{width:40px;height:40px;display:grid;place-items:center;border-radius:13px;background:rgba(255,255,255,.12)!important;color:#fff!important;font-size:11px;font-weight:850}
+.action-grid small{margin-top:5px;color:#687166;font-size:11px;line-height:1.4}
+.action-icon{width:40px;height:40px;display:grid;place-items:center;border-radius:13px;background:var(--icon-soft,#e5effa);color:var(--icon-color,#326ea8);font-size:11px;font-weight:850}
 
 .page-head{display:flex;align-items:center;gap:12px;margin:2px 0 18px}
 .page-head h1{margin:0;font-size:27px}
