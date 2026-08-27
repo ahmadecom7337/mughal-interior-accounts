@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,maximum-scale=1"><meta name="theme-color" content="#252525">
-  <title>Mughal Interior Accounts</title><link rel="stylesheet" href="mobile.css?v=7">
+  <title>Mughal Interior Accounts</title><link rel="stylesheet" href="mobile.css?v=8"><link rel="stylesheet" href="reports-mobile.css?v=1">
 </head>
 <body>
   <div id="loginScreen" class="login-screen hidden"><form id="loginForm" class="login-card"><img src="assets/mughal-logo.png" alt="Mughal Interior"><p class="kicker">MUGHAL INTERIOR</p><h1>Welcome back</h1><p class="subtle">Sign in to manage your business.</p><label>Email<input id="loginEmail" type="email" autocomplete="email" required></label><label>Password<input id="loginPassword" type="password" autocomplete="current-password" required></label><p id="loginError" class="error hidden"></p><button class="button primary block" type="submit">Sign in</button></form></div>
@@ -41,7 +41,38 @@
       <section id="cashDepositsView" class="view"><div class="page-head"><button class="back" data-route="banking">←</button><div><p class="kicker">CASH TO BANK</p><h1>Deposit cash</h1></div></div><button class="button primary block" data-action="deposit-cash">+ Deposit cash</button><div id="cashDepositList" class="record-list spaced-list"></div></section>
       <section id="bankTransfersView" class="view"><div class="page-head"><button class="back" data-route="banking">←</button><div><p class="kicker">INTERNAL TRANSFER</p><h1>Bank to Bank</h1></div></div><button class="button primary block" data-action="bank-transfer">+ Bank transfer</button><div id="bankTransferList" class="record-list spaced-list"></div></section>
       <section id="bankingExpensesView" class="view"><div class="page-head"><button class="back" data-route="banking">←</button><div><p class="kicker">BUSINESS OVERHEADS</p><h1>Expenses</h1></div></div><div class="segmented"><button class="active" data-banking-expense-tab="charges">Charge expense</button><button data-banking-expense-tab="list">List of expenses</button></div><div id="bankingExpenseChargesPanel" class="subpanel active"><button class="button primary block" data-action="charge-banking-expense">+ Charge expense</button><div id="bankingExpenseChargeList" class="record-list spaced-list"></div></div><div id="bankingExpenseListPanel" class="subpanel"><button class="button primary block" data-action="add-expense">+ Add expense</button><div id="bankingExpenseCategoryList" class="record-list spaced-list"></div></div></section>
-      <section id="reportsView" class="view"></section>
+      <section id="reportsView" class="view">
+        <div id="reportsHubPanel" class="action-grid report-action-grid">
+          <button data-open-report="profit"><span class="action-icon">P</span><b>Profit report</b><small>Overall, projects and orders</small></button>
+          <button data-open-report="receivables"><span class="action-icon">R</span><b>Receivable report</b><small>Outstanding customer balances</small></button>
+          <button data-open-report="expenses"><span class="action-icon">E</span><b>Expenses report</b><small>Business and job expenses</small></button>
+          <button data-open-report="labourAssigned"><span class="action-icon">LA</span><b>Labour assigned</b><small>Days and wages by job</small></button>
+          <button data-open-report="materialCost"><span class="action-icon">MC</span><b>Material Cost</b><small>Material consumed by job</small></button>
+          <button data-open-report="supplierPayables"><span class="action-icon">SP</span><b>Supplier payables</b><small>Bills, payments and balance</small></button>
+          <button data-open-report="purchases"><span class="action-icon">PU</span><b>Overall Purchases</b><small>Date and supplier filters</small></button>
+          <button data-open-report="materialMovement"><span class="action-icon">MM</span><b>Material movement</b><small>In, out and running balance</small></button>
+          <button data-open-report="materialQuantity"><span class="action-icon">MQ</span><b>Material quantity</b><small>Current closing stock</small></button>
+          <button data-open-report="labourStatement"><span class="action-icon">LS</span><b>Labour statement</b><small>Assigned, paid, advance and balance</small></button>
+          <button data-open-report="bankStatement"><span class="action-icon">BS</span><b>Bank Statement</b><small>Account ledger and balance</small></button>
+        </div>
+        <div id="reportViewerPanel" class="hidden">
+          <div class="page-head report-page-head"><button id="reportBackBtn" class="back" type="button">←</button><div><p class="kicker">BUSINESS REPORT</p><h1 id="reportTitle">Report</h1></div></div>
+          <div id="reportScope" class="report-scope hidden"><button class="active" data-report-scope="overall">Overall</button><button data-report-scope="projects">Projects</button><button data-report-scope="orders">Orders</button></div>
+          <div id="reportFilters" class="report-filters">
+            <label id="reportFromWrap">From date<input id="reportFrom" type="date"></label>
+            <label id="reportToWrap">To date<input id="reportTo" type="date"></label>
+            <label id="reportProjectWrap">Project<select id="reportProject"></select></label>
+            <label id="reportOrderWrap">Order<select id="reportOrder"></select></label>
+            <label id="reportSupplierWrap">Supplier<select id="reportSupplier"></select></label>
+            <label id="reportMaterialWrap">Material<select id="reportMaterial"></select></label>
+            <label id="reportLabourWrap">Labour person<select id="reportLabour"></select></label>
+            <label id="reportAccountWrap">Bank / cash account<select id="reportAccount"></select></label>
+          </div>
+          <div class="report-tools"><button id="reportClearBtn" class="button secondary" type="button">Clear filters</button><button id="reportCsvBtn" class="button secondary" type="button">Download CSV</button><button id="reportPdfBtn" class="button primary" type="button">Download PDF</button></div>
+          <div id="reportSummary" class="report-summary"></div>
+          <div id="reportContent" class="report-content"></div>
+        </div>
+      </section>
     </main>
     <nav class="bottom-nav" aria-label="Main navigation"><button class="active" data-tab="projectsHub"><span>▣</span><b>Projects</b></button><button data-tab="orders"><span>▤</span><b>Orders</b></button><button data-tab="purchasing"><span>▥</span><b>Purchasing</b></button><button data-tab="labourPayments"><span>♙</span><b>Labour</b></button><button data-tab="reports"><span>⌁</span><b>Reports</b></button><button data-tab="banking"><span>₨</span><b>Banking</b></button></nav>
   </div>
@@ -74,6 +105,6 @@
   <aside id="bankTransferSheet" class="sheet full hidden" role="dialog" aria-modal="true"><div class="sheet-head"><div><p id="bankTransferKicker" class="kicker">MONEY TRANSFER</p><h2 id="bankTransferSheetTitle">Transfer money</h2></div><button data-close>×</button></div><form id="bankTransferForm" class="form"><input id="bankTransferMode" type="hidden"><label>Date *<input id="bankTransferDate" type="date" required></label><label id="bankTransferFromLabel">From account *<select id="bankTransferFrom" required></select></label><div class="transfer-direction" aria-hidden="true">↓</div><label id="bankTransferToLabel">To account *<select id="bankTransferTo" required></select></label><label>Amount *<input id="bankTransferAmount" type="number" min="0.01" step="0.01" inputmode="decimal" required></label><label>Details *<textarea id="bankTransferDetails" rows="4" required placeholder="Reason or transfer details"></textarea></label><p id="bankTransferBalance" class="note"></p><div class="form-actions"><button class="button secondary" type="button" data-close>Cancel</button><button class="button primary" type="submit">Save transfer</button></div></form></aside>
   <aside id="bankingExpenseSheet" class="sheet full hidden" role="dialog" aria-modal="true"><div class="sheet-head"><div><p class="kicker">BUSINESS OVERHEAD</p><h2>Charge expense</h2></div><button data-close>×</button></div><form id="bankingExpenseForm" class="form"><label>Date *<input id="bankingExpenseDate" type="date" required></label><label>Expense *<select id="bankingExpenseCategory" required></select></label><label>Paid from *<select id="bankingExpenseAccount" required></select></label><label>Amount *<input id="bankingExpenseAmount" type="number" min="0.01" step="0.01" inputmode="decimal" required></label><label>Details<textarea id="bankingExpenseDetails" rows="4" placeholder="Rent, salary, equipment rental details…"></textarea></label><p class="note">This is an overall business expense. It will not be charged to any project or order.</p><div class="form-actions"><button class="button secondary" type="button" data-close>Cancel</button><button class="button primary" type="submit">Save expense</button></div></form></aside>
   <div id="processing" class="processing hidden" role="status"><div class="spinner"></div><b id="processingText">Processing…</b><span>Please wait while your action completes.</span></div><div id="toast" class="toast hidden"></div>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.2/html2pdf.bundle.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script><script src="config.js"></script><script src="app-mobile.js?v=7"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.2/html2pdf.bundle.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script><script src="config.js"></script><script src="app-mobile.js?v=8"></script><script src="reports-mobile.js?v=1"></script>
 </body>
 </html>
