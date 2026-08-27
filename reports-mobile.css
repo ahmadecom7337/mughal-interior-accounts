@@ -10,14 +10,8 @@
 .report-tools{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:13px}
 .report-tools .button{min-height:44px;padding:9px;font-size:11px}
 .report-tools #reportPdfBtn{grid-column:1/-1}
-.report-summary{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:13px}
-.report-summary-card{min-height:93px;padding:14px;border-radius:17px;background:#fff;box-shadow:var(--shadow)}
-.report-summary-card.primary{background:linear-gradient(145deg,#292c2a,#151716);color:#fff}
-.report-summary-card span,.report-summary-card small{display:block;color:#929592;font-size:9px;line-height:1.35}
-.report-summary-card.primary span,.report-summary-card.primary small{color:rgba(255,255,255,.58)}
-.report-summary-card strong{display:block;margin:9px 0 4px;font-size:17px;line-height:1.1;letter-spacing:-.035em}
-.report-summary-card.negative strong,.report-negative{color:#b33e46!important}
-.report-summary-card.good strong,.report-positive{color:#2b7655!important}
+.report-negative{color:#b33e46!important}
+.report-positive{color:#2b7655!important}
 .report-table-wrap{overflow:auto;margin-bottom:14px;border-radius:18px;background:#fff;box-shadow:var(--shadow)}
 .report-table{width:100%;min-width:620px;border-collapse:collapse;font-size:10px}
 .report-table.compact{min-width:520px}
@@ -37,7 +31,6 @@
 .report-print-head{display:flex;justify-content:space-between;gap:20px;align-items:flex-start;margin-bottom:22px;padding-bottom:16px;border-bottom:3px solid #222}
 .report-print-head img{width:130px;height:74px;object-fit:contain;mix-blend-mode:multiply}
 .report-print-head h1{margin:0 0 5px;font-size:25px}.report-print-head p{margin:2px 0;color:#666;font-size:10px}
-.report-print-document .report-summary{grid-template-columns:repeat(4,1fr)}
 .report-print-document .report-table-wrap{overflow:visible;box-shadow:none;border:1px solid #ddd}
 .report-print-document .report-table{min-width:0;font-size:9px}
-@media(max-width:370px){.report-summary{grid-template-columns:1fr}.report-filters{grid-template-columns:1fr}.report-filters label{grid-column:1/-1}}
+@media(max-width:370px){.report-filters{grid-template-columns:1fr}.report-filters label{grid-column:1/-1}}
