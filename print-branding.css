@@ -14,6 +14,7 @@
 .document-header>.business-contact{grid-column:1/-1;width:100%;box-sizing:border-box;border-top:1px solid #e1e5df;background:#f8faf7}
 .document-header>div{min-width:0;overflow-wrap:anywhere}
 .document-header img{flex:none}
+.document-meta{grid-template-columns:minmax(0,1.2fr) minmax(0,1.2fr) minmax(0,.8fr) minmax(0,1fr)}
 .document-meta div{min-width:0;overflow-wrap:anywhere}
 .order-document-table{margin:24px;border:1px solid #dfe0de;border-radius:12px;overflow:hidden}
 .order-invoice-table{width:100%;border-collapse:collapse;table-layout:fixed;font-size:11px;line-height:1.5}
@@ -44,6 +45,9 @@
 .disclaimer-actions{display:flex;align-items:center;gap:7px;white-space:nowrap;color:#717b74;font-size:9px;font-style:normal}
 .disclaimer-edit{display:grid;place-items:center;width:27px;height:27px;border:1px solid #ccd3cd;border-radius:50%;background:#fff;color:#23573b;font-size:15px;cursor:pointer}
 .pdf-exporting .disclaimer-actions{display:none}
+@media screen and (max-width:540px){
+  .document-meta{grid-template-columns:repeat(2,minmax(0,1fr));row-gap:16px}
+}
 @media(max-width:430px){
   .business-contact{gap:12px;padding:14px 16px}
   .business-address{font-size:10px}

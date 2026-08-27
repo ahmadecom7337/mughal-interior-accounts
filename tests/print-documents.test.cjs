@@ -3,22 +3,33 @@ const {printFixtures}=require('./print-fixtures.cjs');
 function setup(t){const h=printFixtures();t.after(h.close);return h;}
 function documentFor(h,html){const node=h.w.document.createElement('div');node.innerHTML=html;return node;}
 function contact(node){assert.equal(node.querySelectorAll('.business-contact').length,1);assert.match(node.textContent,/Akbar Road Basti Iqbal Nagar,/);assert.match(node.textContent,/Near Potato Society, Okara/);assert.match(node.textContent,/03024441235/);assert.equal(node.querySelector('.business-whatsapp').getAttribute('href'),'https://wa.me/923024441235');assert.equal(node.querySelector('.business-whatsapp img').getAttribute('alt'),'WhatsApp');}
-function brandedHeader(node){assert.match(node.querySelector('.document-header').textContent,/Mughal Interior and Decor/);assert.match(node.querySelector('.document-header').textContent,/Proprietor Ali Raza Mughal/);assert.ok(node.querySelector('.document-header .business-contact'));}
+function brandedHeader(node){const header=node.querySelector('.document-header');assert.match(header.textContent,/Mughal Interior and Decor/);assert.match(header.textContent,/Proprietor Ali Raza Mughal/);assert.ok(header.querySelector('.business-contact'));assert.doesNotMatch(header.textContent,/INV-|MII-|MIO-|QTN-/);}
 test('order invoice matches project document header and has correctly ordered table/totals',t=>{
   const h=setup(t),node=documentFor(h,h.order());contact(node);
   assert.ok(node.querySelector('.invoice-document .document-header'));assert.ok(node.querySelector('.document-header img[src="assets/mughal-logo.png"]'));brandedHeader(node);
   assert.match(node.querySelector('.document-meta').textContent,/Sample Customer.*ORD-0001/s);
-  assert.match(node.querySelector('.document-meta').textContent,/DATE \/ INVOICE NO\..*INV-0002/s);
+  assert.match(node.querySelector('.document-meta').textContent,/DATE.*INVOICE NO\..*INV-0002/s);
   assert.deepEqual(Array.from(node.querySelectorAll('thead th'),x=>x.textContent),['Item / details','Qty','Rate','Amount']);
   assert.equal(node.querySelectorAll('tbody tr').length,2);assert.match(node.querySelector('tbody tr').textContent,/Wooden door/);
   assert.match(node.querySelector('.invoice-grand-total').textContent,/14,500/);assert.match(node.querySelector('dd.negative').textContent,/500/);
   assert.equal(node.querySelector('.detail-hero'),null);assert.doesNotMatch(node.textContent,/Order details/);
 });
 test('project quote and invoice keep contact exactly once and keep negative scope deductions',t=>{
-  const h=setup(t),quote=documentFor(h,h.quote());contact(quote);brandedHeader(quote);assert.match(quote.querySelector('.document-disclaimer').textContent,/Prices are subject to change until approval and advance payment/);const node=documentFor(h,h.project());contact(node);brandedHeader(node);assert.match(node.querySelector('.document-meta').textContent,/DATE \/ INVOICE NO\..*INV-0001/s);assert.match(node.querySelector('.document-table .negative').textContent,/5,000/);assert.ok(node.querySelector('.document-disclaimer .disclaimer-edit'));
+  const h=setup(t),quote=documentFor(h,h.quote());contact(quote);brandedHeader(quote);assert.match(quote.querySelector('.document-disclaimer').textContent,/Prices are subject to change until approval and advance payment/);const node=documentFor(h,h.project());contact(node);brandedHeader(node);assert.match(node.querySelector('.document-meta').textContent,/DATE.*INVOICE NO\..*INV-0001/s);assert.match(node.querySelector('.document-table .negative').textContent,/5,000/);assert.ok(node.querySelector('.document-disclaimer .disclaimer-edit'));
 });
 test('all receipt and purchase print-preview types contain one contact block',t=>{
   const h=setup(t);for(const call of ["viewReceipt('receipt-1')","viewOrderReceipt('order-receipt')","viewPurchasePayment('supplier-payment')","viewPurchase('bill-1')"]){h.run(call);contact(h.w.document.querySelector('#detailBody .pdf-document'));}
+});
+test('quotes and both invoice types show separate date and number fields',t=>{
+  const h=setup(t);
+  for(const [html,numberLabel,number] of [[h.quote(),'QUOTE NO.',h.run('state.projects[0].project_number')],[h.project(),'INVOICE NO.','INV-0001'],[h.order(),'INVOICE NO.','INV-0002']]){
+    const node=documentFor(h,html),fields=Array.from(node.querySelector('.document-meta').children);
+    assert.equal(fields.length,4);
+    const dateField=fields.find(field=>field.querySelector('small').textContent==='DATE'),numberField=fields.find(field=>field.querySelector('small').textContent===numberLabel);
+    assert.ok(dateField);assert.ok(numberField);assert.notEqual(dateField,numberField);
+    assert.ok(dateField.querySelector('b').textContent);assert.equal(numberField.querySelector('b').textContent,number);
+    assert.equal(node.querySelector('.document-brand>span'),null);assert.doesNotMatch(node.textContent,/DATE \/ (INVOICE|QUOTE) NO/);
+  }
 });
 test('all 11 reports and individual project statement have contact once, outside financial tables',t=>{
   const h=setup(t),d=h.w.document;
