@@ -28,7 +28,7 @@
     const orders=state.walkInOrders.filter(row=>row.status!=='Cancelled').map(row=>{const revenue=num(row.amount),materials=jobMaterialCost('order',row.id),labour=jobLabourCost('order',row.id),expenses=jobExpenseCost('order',row.id),received=jobReceipts('order',row.id);return{kind:'order',id:row.id,number:row.order_number,name:row.title||'Order invoice',customer:row.customer_name||'',day:row.order_date,revenue,materials,labour,expenses,cost:materials+labour+expenses,received,balance:revenue-received}});
     return [...projects,...orders].filter(row=>reportState.scope==='overall'||reportState.scope===`${row.kind}s`).filter(row=>inRange(row.day)).filter(row=>row.kind!=='project'||$('#reportProject').value==='all'||row.id===$('#reportProject').value).filter(row=>row.kind!=='order'||$('#reportOrder').value==='all'||row.id===$('#reportOrder').value);
   }
-  function setOutput(content,csv){$('#reportContent').innerHTML=content;reportState.csv=csv;}
+  function setOutput(content,csv){$('#reportContent').innerHTML=content+businessContact();reportState.csv=csv;}
   const statementProject=()=>reportState.type==='receivables'&&reportState.scope==='projects'&&$('#reportProject').value!=='all'?project($('#reportProject').value):null;
   const reportPeriod=()=>!definitions[reportState.type]?.filters.includes('date')||!$('#reportFrom').value&&!$('#reportTo').value?'All Dates':`${date($('#reportFrom').value)||'Beginning'} to ${date($('#reportTo').value)||'Latest entry'}`;
   const validReportDates=()=>!definitions[reportState.type]?.filters.includes('date')||!$('#reportFrom').value||!$('#reportTo').value||$('#reportFrom').value<=$('#reportTo').value;
