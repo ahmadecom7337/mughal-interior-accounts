@@ -33,7 +33,8 @@ test('open shows complete list without focusing search; search, choose and cance
 test('both labour forms have 19 half-step options from 1 to 10 and recalculate wages',t=>{
   const h=setup(t);for(const [open,days,person,total] of [['openLabourAssignment()','labourDayType','labourAssignmentPerson','labourActualCost'],['openOrderLabour()','orderLabourDay','orderLabourPerson','orderLabourTotal']]){
     h.run(open);assert.deepEqual(Array.from(h.source(days).options,o=>Number(o.value)),Array.from({length:19},(_,i)=>1+i/2));
-    h.open(person);h.pick('Sample worker');h.open(days);h.search('3 and half');h.pick('3 and half');assert.equal(h.source(days).value,'3.5');assert.equal(h.source(total).value,'5250.00');
+    assert.deepEqual(Array.from(h.source(days).options,o=>o.textContent),Array.from({length:19},(_,i)=>i%2?`${Math.floor(1+i/2)}½ days`:`${1+i/2} ${i===0?'day':'days'}`));
+    h.open(person);h.pick('Sample worker');h.open(days);h.search('3½');h.pick('3½');assert.equal(h.source(days).value,'3.5');assert.equal(h.source(total).value,'5250.00');
     h.open(days);h.search('10');h.pick('10 days');assert.equal(h.source(total).value,'15000.00');
   }
 });
@@ -79,7 +80,7 @@ test('keyboard search navigation, Escape cancellation, and disabled options',t=>
 test('multi-day submissions persist correct project and order wages using existing save handlers',async t=>{
   const h=setup(t);
   for(const [open,form,job,person,days] of [['openLabourAssignment()','labourAssignmentForm','labourAssignmentProject','labourAssignmentPerson','labourDayType'],['openOrderLabour()','orderLabourForm','orderLabourOrder','orderLabourPerson','orderLabourDay']]){
-    h.run(open);h.open(job);h.pick(job==='labourAssignmentProject'?'woodwork':'Sample Buyer');h.open(person);h.pick('Sample worker');h.open(days);h.search('3 and half');h.pick('3 and half');
+    h.run(open);h.open(job);h.pick(job==='labourAssignmentProject'?'woodwork':'Sample Buyer');h.open(person);h.pick('Sample worker');h.open(days);h.search('3½');h.pick('3½');
     const element=h.source(form),submitter=element.querySelector('[type="submit"]');assert.equal(element.checkValidity(),true);
     element.dispatchEvent(new h.w.SubmitEvent('submit',{bubbles:true,cancelable:true,submitter}));await new Promise(r=>setImmediate(r));
     assert.equal(h.run('state.labourAssignments[0].days'),3.5);assert.equal(h.run('state.labourAssignments[0].amount'),5250);
