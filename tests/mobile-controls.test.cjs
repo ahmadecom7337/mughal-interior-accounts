@@ -112,3 +112,17 @@ test('business overheads reduce displayed net profit even without jobs',t=>{
   const h=setup(t);h.run("state.projects=[];state.walkInOrders=[];state.payments=[{id:'rent',payment_type:'expense',payment_date:'2026-08-01',amount:500}]");h.d.querySelector('[data-open-report="profit"]').click();
   const rows=h.d.querySelectorAll('#reportContent tbody tr');assert.equal(rows.length,2);assert.match(rows[0].textContent,/Business overheads/);assert.match(rows[1].textContent,/Net profit \/ loss/);assert.match(rows[1].lastElementChild.textContent,/-500/);
 });
+test('approving a project uses the simple sequential invoice number',async t=>{
+  const h=setup(t);h.run("state.invoices=[];Object.assign(state.projects[0],{status:'Pending',price_with_material:10000});openApproval('project-1')");
+  const form=h.source('approvalForm');form.dispatchEvent(new h.w.SubmitEvent('submit',{bubbles:true,cancelable:true,submitter:form.querySelector('[type="submit"]')}));await new Promise(r=>setImmediate(r));
+  assert.equal(h.run("state.invoices[0].invoice_number"),'INV-0001');
+});
+test('wage balances use padded readable rows while preserving currency values',t=>{
+  const h=setup(t),style=h.d.createElement('style');style.textContent=fs.readFileSync(path.join(root,'mobile.css'),'utf8');h.d.head.append(style);
+  h.run("state.labourAssignments=[{id:'a1',labourer_id:'l1',project_id:'project-1',days:2.5,daily_rate:1500,amount:3750,assignment_date:'2026-08-27'}];state.payments.push({id:'advance1',payment_type:'labour_advance',labourer_id:'l1',amount:1000});openPayWages('l1')");
+  const summary=h.d.querySelector('.wage-summary');assert.equal(summary.tagName,'DL');assert.equal(summary.classList.contains('totals-card'),false);
+  assert.deepEqual(Array.from(summary.querySelectorAll('dt'),node=>node.textContent),['Wages due','Advance balance']);
+  assert.equal(h.source('payWagesGross').textContent,'Rs. 3,750');assert.equal(h.source('payWagesAdvance').textContent,'Rs. 1,000');
+  for(const id of ['payWagesGross','payWagesAdvance']){const amount=h.source(id),rowStyle=h.w.getComputedStyle(amount.parentElement),amountStyle=h.w.getComputedStyle(amount);assert.equal(amount.tagName,'DD');assert.equal(rowStyle.padding,'14px 16px');assert.equal(rowStyle.flexWrap,'wrap');assert.equal(amountStyle.fontSize,'18px');assert.equal(amountStyle.textAlign,'right');}
+  h.run("state.payments=[];state.labourAssignments=[];updatePayWageSummary()");assert.equal(h.source('payWagesGross').textContent,'Rs. 0');assert.equal(h.source('payWagesAdvance').textContent,'Rs. 0');
+});
