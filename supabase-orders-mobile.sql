@@ -228,12 +228,12 @@ begin
   insert into public.order_invoice_items(
     business_id,walk_in_order_id,order_item_id,item_name,details,quantity,rate,sort_order
   )
-  select p_business_id,v_order_id,x.order_item_id,i.name,
-    nullif(trim(coalesce(x.details,i.details,'')),''),
-    x.quantity,x.rate,x.ordinality::integer
-  from jsonb_to_recordset(p_items) with ordinality
-    as x(order_item_id uuid, details text, quantity numeric, rate numeric, ordinality bigint)
-  join public.order_items i on i.id=x.order_item_id and i.business_id=p_business_id;
+  select p_business_id,v_order_id,(x.item->>'order_item_id')::uuid,i.name,
+    nullif(trim(coalesce(x.item->>'details',i.details,'')),''),
+    (x.item->>'quantity')::numeric,(x.item->>'rate')::numeric,x.sort_order::integer
+  from jsonb_array_elements(p_items) with ordinality as x(item,sort_order)
+  join public.order_items i on i.id=(x.item->>'order_item_id')::uuid
+    and i.business_id=p_business_id;
   return v_order_id;
 end;
 $$;
@@ -298,12 +298,12 @@ begin
   insert into public.order_invoice_items(
     business_id,walk_in_order_id,order_item_id,item_name,details,quantity,rate,sort_order
   )
-  select v_business_id,p_order_id,x.order_item_id,i.name,
-    nullif(trim(coalesce(x.details,i.details,'')),''),
-    x.quantity,x.rate,x.ordinality::integer
-  from jsonb_to_recordset(p_items) with ordinality
-    as x(order_item_id uuid, details text, quantity numeric, rate numeric, ordinality bigint)
-  join public.order_items i on i.id=x.order_item_id and i.business_id=v_business_id;
+  select v_business_id,p_order_id,(x.item->>'order_item_id')::uuid,i.name,
+    nullif(trim(coalesce(x.item->>'details',i.details,'')),''),
+    (x.item->>'quantity')::numeric,(x.item->>'rate')::numeric,x.sort_order::integer
+  from jsonb_array_elements(p_items) with ordinality as x(item,sort_order)
+  join public.order_items i on i.id=(x.item->>'order_item_id')::uuid
+    and i.business_id=v_business_id;
   return p_order_id;
 end;
 $$;
