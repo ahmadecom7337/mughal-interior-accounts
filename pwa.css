@@ -1,0 +1,10 @@
+.pwa-toolbar{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 14px}
+.pwa-toolbar .button{flex:1;min-height:44px;padding:10px 14px;font-size:12px}
+.pwa-toolbar[hidden],[data-pwa-install][hidden],#pwaUpdateBtn[hidden],#pwaOfflineNotice[hidden]{display:none!important}
+.pwa-login-install{min-height:44px;border:1px solid #cbd8cf;border-radius:12px;padding:10px;background:#eff4ef;color:#285444;font-size:13px;font-weight:700}
+.pwa-offline-notice{position:fixed;z-index:45;bottom:calc(88px + env(safe-area-inset-bottom,0px));left:16px;right:16px;padding:10px 14px;border:1px solid #d9bb78;border-radius:12px;background:#fff4d9;color:#654311;font-size:12px;line-height:1.5;box-shadow:0 4px 20px #221a0915}
+.pwa-dialog{width:min(calc(100% - 32px),390px);padding:26px;border:0;border-radius:22px;background:#fff;color:#202821;box-shadow:0 16px 70px #13231a40}
+.pwa-dialog::backdrop{background:#13231a70}.pwa-dialog:not([open]){display:none}
+.pwa-dialog h2{font-size:22px;margin:0 0 12px}.pwa-dialog p,.pwa-dialog li{font-size:14px;line-height:1.6}.pwa-dialog ol{padding-left:22px}.pwa-dialog .button{width:100%;margin-top:12px}
+@media(min-width:540px){.pwa-offline-notice{left:50%;right:auto;width:398px;transform:translateX(-50%)}}
+@media print{.pwa-toolbar,.pwa-offline-notice,.pwa-dialog,.pwa-login-install{display:none!important}}

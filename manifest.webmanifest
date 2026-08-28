@@ -1,0 +1,17 @@
+{
+  "id": "./",
+  "name": "Mughal Interior and Decor",
+  "short_name": "Mughal Accounts",
+  "description": "Projects, orders, payments and reports for Mughal Interior and Decor.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f1f2f1",
+  "theme_color": "#285444",
+  "lang": "en-PK",
+  "icons": [
+    { "src": "assets/pwa/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "assets/pwa/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "assets/pwa/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

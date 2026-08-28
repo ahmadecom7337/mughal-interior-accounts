@@ -17,3 +17,8 @@ calculation and submission, receipt hints, navigation icons, and project stateme
 
 Native dialog rendering is stubbed in these tests. Mobile visual layout, native
 keyboard behavior and PDF pagination still require a real-browser/device pass.
+
+PWA tests cover manifest/icon packaging, repository scope, offline fallback,
+API/cache exclusions, install controls, iOS instructions, opt-in updates, and
+connectivity/theme changes. These use mocked Service Worker APIs; real device
+installation still requires the checklist in `../PWA.md`.

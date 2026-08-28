@@ -21,8 +21,8 @@ button,input,select,textarea{font:inherit}
 button{cursor:pointer}
 .hidden{display:none!important}
 
-.app{width:100%;min-height:100vh;padding:calc(98px + env(safe-area-inset-top,0px)) 0 108px;background:var(--bg)}
-.topbar{--screen-color:#285444;position:fixed;z-index:30;inset:0 0 auto;height:calc(86px + env(safe-area-inset-top,0px));display:grid;grid-template-columns:44px minmax(0,1fr) 42px;gap:11px;align-items:center;padding:calc(12px + env(safe-area-inset-top,0px)) 17px 12px;background:var(--screen-color);color:#fff;box-shadow:0 3px 14px rgba(24,26,25,.12)}
+.app{width:100%;min-height:100vh;padding:calc(98px + env(safe-area-inset-top,0px)) 0 calc(108px + env(safe-area-inset-bottom,0px));background:var(--bg)}
+.topbar{--screen-color:#285444;position:fixed;z-index:30;inset:0 0 auto;height:calc(86px + env(safe-area-inset-top,0px));display:grid;grid-template-columns:44px minmax(0,1fr) 42px;gap:11px;align-items:center;padding:calc(12px + env(safe-area-inset-top,0px)) 17px 12px;background:var(--screen-color);color:#fff;box-shadow:0 5px 12px -6px rgba(20,35,27,.30),0 2px 4px -2px rgba(20,35,27,.12)}
 .brand-avatar{width:44px;height:44px;display:grid;place-items:center;overflow:hidden;border:4px solid #fff;border-radius:50%;background:#fff;box-shadow:0 5px 16px rgba(0,0,0,.07)}
 .brand-avatar img{width:100%;height:100%;object-fit:contain}
 .topbar>div span,.topbar>div b{display:block}
@@ -182,7 +182,7 @@ main{padding:2px 17px 30px}
 .empty{padding:30px 18px;text-align:center;color:var(--muted);font-size:12px}
 .empty b{display:block;margin-bottom:5px;color:var(--ink);font-size:14px}
 
-.bottom-nav{position:fixed;z-index:35;inset:auto 9px 12px;display:grid;grid-template-columns:repeat(6,1fr);height:70px;padding:6px;border:1px solid rgba(225,226,225,.8);border-radius:28px;background:rgba(255,255,255,.94);box-shadow:0 15px 35px rgba(27,29,28,.13);backdrop-filter:blur(22px)}
+.bottom-nav{position:fixed;z-index:35;inset:auto 9px calc(12px + env(safe-area-inset-bottom,0px));display:grid;grid-template-columns:repeat(6,1fr);height:70px;padding:6px;border:1px solid rgba(225,226,225,.8);border-radius:28px;background:rgba(255,255,255,.94);box-shadow:0 15px 35px rgba(27,29,28,.13);backdrop-filter:blur(22px)}
 .bottom-nav button{display:grid;place-items:center;align-content:center;gap:3px;border:0;border-radius:22px;background:transparent;color:#777a77;font-size:9px}
 .bottom-nav button span{font-size:18px;line-height:1}
 .bottom-nav button b{font-weight:560}
