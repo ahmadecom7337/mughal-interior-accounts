@@ -3,7 +3,7 @@
   "private": true,
   "version": "1.0.0",
   "scripts": {
-    "test": "node --test mobile-controls.test.cjs project-statements.test.cjs print-documents.test.cjs"
+    "test": "node --test mobile-controls.test.cjs project-statements.test.cjs print-documents.test.cjs pwa.test.cjs"
   },
   "devDependencies": {
     "jsdom": "26.1.0"
