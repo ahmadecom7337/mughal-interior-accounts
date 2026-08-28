@@ -5,7 +5,7 @@ const path = require('node:path');
 const vm = require('node:vm');
 const fixture = require('./project-statement-fixture.cjs');
 const root = path.join(__dirname, '..');
-function setup() {
+function setup(now='2026-08-28T12:00:00') {
   const elements = new Map(), events = {}, exports = [];
   function element(selector) {
     if (!elements.has(selector)) elements.set(selector, {
@@ -15,7 +15,7 @@ function setup() {
     });
     return elements.get(selector);
   }
-  const context = {document:{querySelector:element,querySelectorAll:()=>[],addEventListener(name,fn){events[name]=fn;},createElement(){return {innerHTML:'',remove(){this.removed=true;}};},body:{append(){}}},window:{},crypto:{},console};
+  const context = {document:{querySelector:element,querySelectorAll:()=>[],addEventListener(name,fn){events[name]=fn;},createElement(){return {innerHTML:'',remove(){this.removed=true;}};},body:{append(){}}},window:{scrollTo(){}},crypto:{},console,Date:class extends Date{constructor(...args){super(...(args.length?args:[now]));}}};
   vm.createContext(context);
   vm.runInContext(fs.readFileSync(path.join(root,'app-mobile.js'),'utf8').split('class Store')[0],context);
   context.fixture=structuredClone(fixture);
@@ -23,7 +23,7 @@ function setup() {
   context.working=async(label,button,fn)=>fn();context.toast=()=>{};
   context.window.html2pdf=true;
   context.html2pdf=()=>({set(options){this.options=options;return this;},from(node){this.node=node;return this;},async save(){exports.push(this);}});
-  const source=fs.readFileSync(path.join(root,'reports-mobile.js'),'utf8').replace(/\}\)\(\);\s*$/, 'globalThis.api={projectStatementRows,renderReceivables,renderCurrent,reportState,clearReportDates,downloadPdf,reportFileName};})();');
+  const source=fs.readFileSync(path.join(root,'reports-mobile.js'),'utf8').replace(/\}\)\(\);\s*$/, 'globalThis.api={projectStatementRows,renderReceivables,renderCurrent,reportState,clearReportDates,downloadPdf,reportFileName,openReport,showHub};})();');
   vm.runInContext(source,context);
   context.api.reportState.type='receivables';context.api.reportState.scope='projects';
   return {api:context.api,context,element,exports,events,job:context.fixture.projects[0],ledger:()=>context.api.projectStatementRows(context.fixture.projects[0])};
@@ -33,6 +33,29 @@ test('all dates: invoice date, scope changes, ordered receipts, no mirror double
   assert.equal(ledger.rows.length,6);assert.equal(ledger.rows[0].day,'2026-01-05');
   assert.deepEqual(Array.from(ledger.rows,row=>row.balance),[100000,80000,90000,85000,45000,-5000]);
   assert.equal(ledger.charges,105000);assert.equal(ledger.receipts,110000);assert.equal(ledger.closing,-5000);
+});
+test('opening a report defaults to the local month through today, including month/year and leap-day boundaries',()=>{
+  for(const [now,from,to] of [
+    ['2026-08-28T12:00:00','2026-08-01','2026-08-28'],
+    ['2026-09-01T00:15:00','2026-09-01','2026-09-01'],
+    ['2027-01-01T00:15:00','2027-01-01','2027-01-01'],
+    ['2028-02-29T23:45:00','2028-02-01','2028-02-29']
+  ]){
+    const h=setup(now);h.api.openReport('profit');
+    assert.equal(h.element('#reportFrom').value,from);assert.equal(h.element('#reportTo').value,to);
+    assert.equal(h.element('#reportAllDatesBtn')['aria-pressed'],'false');
+  }
+});
+test('date edits survive rendering and scope changes; reopening restores month defaults after All Dates',()=>{
+  const h=setup();h.api.openReport('receivables');
+  h.element('#reportFrom').value='2026-02-01';h.element('#reportTo').value='2026-02-28';
+  h.events.click({target:{id:'',closest:selector=>selector==='[data-report-scope]'?{dataset:{reportScope:'projects'}}:null}});
+  h.context.window.renderMobileReports();
+  assert.equal(h.element('#reportFrom').value,'2026-02-01');assert.equal(h.element('#reportTo').value,'2026-02-28');
+  h.api.clearReportDates();h.context.window.renderMobileReports();
+  assert.equal(h.element('#reportFrom').value,'');assert.equal(h.element('#reportTo').value,'');
+  h.api.showHub();h.api.openReport('expenses');
+  assert.equal(h.element('#reportFrom').value,'2026-08-01');assert.equal(h.element('#reportTo').value,'2026-08-28');
 });
 test('February includes opening, period receipts and charges; no future payment',()=>{
   const h=setup();h.element('#reportFrom').value='2026-02-01';h.element('#reportTo').value='2026-02-28';
@@ -63,7 +86,7 @@ test('PDF and CSV include identity, date range, references and same closing bala
   const h=setup();h.element('#reportFrom').value='2026-02-01';h.element('#reportTo').value='2026-02-28';h.api.renderCurrent();
   assert.equal(h.api.reportState.csv.at(-1).at(-1),45000);await h.api.downloadPdf({});
   const output=h.exports[0];assert.equal(output.options.jsPDF.orientation,'portrait');assert.equal(output.options.filename,'project-statement-prj-0001-2026-02-01-2026-02-28.pdf');
-  assert.equal(output.node.innerHTML,h.element('#reportContent').innerHTML);assert.equal(output.node.removed,true);
+  assert.equal(output.node.innerHTML,h.element('#reportContent').innerHTML+vm.runInContext('businessContact()',h.context));assert.equal(output.node.removed,true);
   for(const text of ['Sample Customer','Mughal Interior','PRJ-0001','RCP-0002','mughal-logo.png','Scope deduction'])assert.ok(output.node.innerHTML.includes(text));
 });
 test('pending quotations do not generate client statements; closed approved projects do',async()=>{

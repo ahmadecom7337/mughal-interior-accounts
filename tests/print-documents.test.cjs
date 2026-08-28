@@ -31,10 +31,20 @@ test('quotes and both invoice types show separate date and number fields',t=>{
     assert.equal(node.querySelector('.document-brand>span'),null);assert.doesNotMatch(node.textContent,/DATE \/ (INVOICE|QUOTE) NO/);
   }
 });
-test('all 11 reports and individual project statement have contact once, outside financial tables',t=>{
-  const h=setup(t),d=h.w.document;
-  for(const button of d.querySelectorAll('[data-open-report]')){button.click();contact(d.querySelector('#reportContent'));assert.equal(d.querySelectorAll('#reportContent table .business-contact').length,0);}
-  d.querySelector('[data-open-report="receivables"]').click();d.querySelector('[data-report-scope="projects"]').click();d.querySelector('#reportProject').value='project-1';d.querySelector('#reportProject').dispatchEvent(new h.w.Event('change'));contact(d.querySelector('#reportContent'));assert.ok(d.querySelector('.project-statement'));
+test('all report screens omit business contact while PDFs retain it once outside financial tables',async t=>{
+  const h=setup(t),d=h.w.document;let exported;
+  h.w.html2pdf=()=>({set(){return this;},from(node){this.node=node;return this;},async save(){exported=this.node;}});
+  async function checkScreenAndPdf(){
+    const screen=d.querySelector('#reportContent');
+    assert.equal(screen.querySelector('.business-contact'),null);
+    assert.doesNotMatch(screen.textContent,/Proprietor Ali Raza Mughal|Akbar Road Basti Iqbal Nagar|Near Potato Society, Okara|03024441235|WhatsApp/);
+    exported=null;d.querySelector('#reportPdfBtn').click();await new Promise(resolve=>setImmediate(resolve));
+    assert.ok(exported);contact(exported);assert.match(exported.textContent,/Proprietor Ali Raza Mughal/);
+    assert.equal(exported.querySelectorAll('table .business-contact').length,0);
+    assert.equal(exported.isConnected,false);assert.equal(screen.querySelector('.business-contact'),null);
+  }
+  for(const button of d.querySelectorAll('[data-open-report]')){button.click();await checkScreenAndPdf();}
+  d.querySelector('[data-open-report="receivables"]').click();d.querySelector('[data-report-scope="projects"]').click();d.querySelector('#reportProject').value='project-1';d.querySelector('#reportProject').dispatchEvent(new h.w.Event('change'));assert.ok(d.querySelector('.project-statement'));await checkScreenAndPdf();
 });
 test('order invoice handles blank fields, fractional quantity and escaped details',t=>{
   const h=setup(t);h.run("state.walkInOrders[0].customer_phone='';state.orderInvoiceItems[0].details='<script>unsafe</script>';state.orderInvoiceItems[0].item_name='A & B';");
