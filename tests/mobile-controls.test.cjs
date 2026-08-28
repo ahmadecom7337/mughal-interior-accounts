@@ -71,6 +71,27 @@ test('every module card/navigation has a semantic SVG and icon-only buttons stay
   for(const button of h.d.querySelectorAll('button.back,.sheet-head>button[data-close],#logoutBtn')){assert.ok(button.querySelector('svg'));assert.ok(button.getAttribute('aria-label'));}
   assert.doesNotMatch(fs.readFileSync(path.join(root,'mobile.css'),'utf8'),/action-grid>button:nth-child/);
 });
+test('company header follows every screen and report, including back navigation',t=>{
+  const h=setup(t),header=h.d.querySelector('.topbar'),style=h.d.createElement('style');
+  style.textContent=fs.readFileSync(path.join(root,'mobile.css'),'utf8');h.d.head.append(style);
+  assert.equal(header.querySelector('div>span').textContent,'Mughal Interior and Decor');
+  assert.doesNotMatch(header.textContent,/Good day/);
+  const colors=new Set();
+  function check(screen){
+    assert.equal(header.dataset.screen,screen);assert.ok(h.source('screenTitle').textContent);
+    const color=h.w.getComputedStyle(header).getPropertyValue('--screen-color').trim();
+    assert.match(color,/^#[0-9a-f]{6}$/i);assert.ok(!colors.has(color),`Duplicate screen colour: ${screen}`);colors.add(color);
+    const rgb=color.slice(1).match(/../g).map(x=>parseInt(x,16)/255).map(x=>x<=.04045?x/12.92:((x+.055)/1.055)**2.4);
+    const luminance=.2126*rgb[0]+.7152*rgb[1]+.0722*rgb[2];
+    assert.ok(1.05/(luminance+.05)>=4.5,`White text contrast: ${screen}`);
+  }
+  for(const view of h.d.querySelectorAll('section.view')){const screen=view.id.replace(/View$/,'');h.run(`route(${JSON.stringify(screen)})`);check(screen);}
+  for(const button of h.d.querySelectorAll('[data-open-report]')){button.click();check(`report-${button.dataset.openReport}`);assert.equal(h.source('screenTitle').textContent,h.source('reportTitle').textContent);}
+  h.source('reportBackBtn').click();assert.equal(header.dataset.screen,'reports');assert.equal(h.source('screenTitle').textContent,'Reports');
+  h.d.querySelector('[data-open-report="profit"]').click();h.d.querySelector('[data-tab="orders"]').click();assert.equal(header.dataset.screen,'orders');
+  h.d.querySelector('[data-tab="reports"]').click();assert.equal(header.dataset.screen,'reports');
+  assert.equal(h.source('logoutBtn').getAttribute('aria-label'),'Sign out');
+});
 test('keyboard search navigation, Escape cancellation, and disabled options',t=>{
   const h=setup(t);h.run('openProject()');const s=h.source('projectParty');s.add(new h.w.Option('Disabled choice','disabled'));s.options[s.options.length-1].disabled=true;
   const dialog=h.open('projectParty');assert.equal(Array.from(dialog.querySelectorAll('button')).find(b=>b.textContent==='Disabled choice').disabled,true);

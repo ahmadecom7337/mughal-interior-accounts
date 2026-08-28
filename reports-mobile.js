@@ -148,8 +148,8 @@
     $('#reportFrom').value=`${month}-01`;
     $('#reportTo').value=`${month}-${String(now.getDate()).padStart(2,'0')}`;
   }
-  function openReport(type){setDefaultReportDates();reportState.type=type;reportState.scope='overall';$('#reportsHubPanel').classList.add('hidden');$('#reportViewerPanel').classList.remove('hidden');$('#reportTitle').textContent=definitions[type].title;renderCurrent();window.scrollTo({top:0,behavior:'instant'})}
-  function showHub(){$('#reportViewerPanel').classList.add('hidden');$('#reportsHubPanel').classList.remove('hidden');reportState.type=null;$('#screenTitle').textContent='Reports';window.scrollTo({top:0,behavior:'instant'})}
+  function openReport(type){setDefaultReportDates();reportState.type=type;reportState.scope='overall';$('#reportsHubPanel').classList.add('hidden');$('#reportViewerPanel').classList.remove('hidden');$('#reportTitle').textContent=definitions[type].title;setScreenHeader(`report-${type}`,definitions[type].title);renderCurrent();window.scrollTo({top:0,behavior:'instant'})}
+  function showHub(){$('#reportViewerPanel').classList.add('hidden');$('#reportsHubPanel').classList.remove('hidden');reportState.type=null;setScreenHeader('reports','Reports');window.scrollTo({top:0,behavior:'instant'})}
   function reportFileName(){const job=statementProject();return job?`project-statement-${safeName(job.project_number||job.name)}-${$('#reportFrom').value||'all'}-${$('#reportTo').value||'dates'}`:`mughal-${reportState.type}-${today()}`;}
   async function downloadPdf(button){
     if(!validReportDates())return;
