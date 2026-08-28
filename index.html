@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,maximum-scale=1"><meta name="theme-color" content="#252525">
-  <title>Mughal Interior Accounts</title><link rel="stylesheet" href="mobile.css?v=10"><link rel="stylesheet" href="reports-mobile.css?v=3"><link rel="stylesheet" href="mobile-controls.css?v=1"><link rel="stylesheet" href="print-branding.css?v=2">
+  <title>Mughal Interior Accounts</title><link rel="stylesheet" href="mobile.css?v=10"><link rel="stylesheet" href="reports-mobile.css?v=4"><link rel="stylesheet" href="mobile-controls.css?v=1"><link rel="stylesheet" href="print-branding.css?v=2">
 </head>
 <body>
   <div id="loginScreen" class="login-screen hidden"><form id="loginForm" class="login-card"><img src="assets/mughal-logo.png" alt="Mughal Interior"><p class="kicker">MUGHAL INTERIOR</p><h1>Welcome back</h1><p class="subtle">Sign in to manage your business.</p><label>Email<input id="loginEmail" type="email" autocomplete="email" required></label><label>Password<input id="loginPassword" type="password" autocomplete="current-password" required></label><p id="loginError" class="error hidden"></p><button class="button primary block" type="submit">Sign in</button></form></div>
@@ -58,7 +58,6 @@
         <div id="reportViewerPanel" class="hidden">
           <div class="page-head report-page-head"><button id="reportBackBtn" class="back" type="button">←</button><div><p class="kicker">BUSINESS REPORT</p><h1 id="reportTitle">Report</h1></div></div>
           <div id="reportScope" class="report-scope hidden"><button class="active" data-report-scope="overall">Overall</button><button data-report-scope="projects">Projects</button><button data-report-scope="orders">Orders</button></div>
-          <div id="reportDateTools" class="report-date-tools"><button id="reportAllDatesBtn" class="button primary" type="button" aria-pressed="true">All Dates</button></div>
           <div id="reportFilters" class="report-filters">
             <label id="reportFromWrap">From date<input id="reportFrom" type="date"></label>
             <label id="reportToWrap">To date<input id="reportTo" type="date"></label>
@@ -69,7 +68,7 @@
             <label id="reportLabourWrap">Labour person<select id="reportLabour"></select></label>
             <label id="reportAccountWrap">Bank / cash account<select id="reportAccount"></select></label>
           </div>
-          <div class="report-tools"><button id="reportClearBtn" class="button secondary" type="button">Clear filters</button><button id="reportCsvBtn" class="button secondary" type="button">Download CSV</button><button id="reportPdfBtn" class="button primary" type="button">Download PDF</button></div>
+          <div class="report-tools"><div id="reportDateTools" class="report-date-tools"><button id="reportAllDatesBtn" class="button secondary" type="button" aria-pressed="false">All Dates</button></div><button id="reportPdfBtn" class="button primary" type="button">Download PDF</button></div>
           <div id="reportContent" class="report-content"></div>
         </div>
       </section>
@@ -106,6 +105,6 @@
   <aside id="bankTransferSheet" class="sheet full hidden" role="dialog" aria-modal="true"><div class="sheet-head"><div><p id="bankTransferKicker" class="kicker">MONEY TRANSFER</p><h2 id="bankTransferSheetTitle">Transfer money</h2></div><button data-close>×</button></div><form id="bankTransferForm" class="form"><input id="bankTransferMode" type="hidden"><label>Date *<input id="bankTransferDate" type="date" required></label><label id="bankTransferFromLabel">From account *<select id="bankTransferFrom" required></select></label><div class="transfer-direction" aria-hidden="true">↓</div><label id="bankTransferToLabel">To account *<select id="bankTransferTo" required></select></label><label>Amount *<input id="bankTransferAmount" type="number" min="0.01" step="0.01" inputmode="decimal" required></label><label>Details *<textarea id="bankTransferDetails" rows="4" required placeholder="Reason or transfer details"></textarea></label><p id="bankTransferBalance" class="note"></p><div class="form-actions"><button class="button secondary" type="button" data-close>Cancel</button><button class="button primary" type="submit">Save transfer</button></div></form></aside>
   <aside id="bankingExpenseSheet" class="sheet full hidden" role="dialog" aria-modal="true"><div class="sheet-head"><div><p class="kicker">BUSINESS OVERHEAD</p><h2>Charge expense</h2></div><button data-close>×</button></div><form id="bankingExpenseForm" class="form"><label>Date *<input id="bankingExpenseDate" type="date" required></label><label>Expense *<select id="bankingExpenseCategory" required></select></label><label>Paid from *<select id="bankingExpenseAccount" required></select></label><label>Amount *<input id="bankingExpenseAmount" type="number" min="0.01" step="0.01" inputmode="decimal" required></label><label>Details<textarea id="bankingExpenseDetails" rows="4" placeholder="Rent, salary, equipment rental details…"></textarea></label><p class="note">This is an overall business expense. It will not be charged to any project or order.</p><div class="form-actions"><button class="button secondary" type="button" data-close>Cancel</button><button class="button primary" type="submit">Save expense</button></div></form></aside>
   <div id="processing" class="processing hidden" role="status"><div class="spinner"></div><b id="processingText">Processing…</b><span>Please wait while your action completes.</span></div><div id="toast" class="toast hidden"></div>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.2/html2pdf.bundle.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script><script src="config.js"></script><script src="app-mobile.js?v=12"></script><script src="reports-mobile.js?v=5"></script><script src="mobile-controls.js?v=1"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.2/html2pdf.bundle.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script><script src="config.js"></script><script src="app-mobile.js?v=12"></script><script src="reports-mobile.js?v=7"></script><script src="mobile-controls.js?v=1"></script>
 </body>
 </html>

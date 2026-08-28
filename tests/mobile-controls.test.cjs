@@ -63,7 +63,7 @@ test('disabled selects and empty/required states work, reset restores trigger',a
   h.source('projectParty').disabled=false;h.refresh();h.source('projectParty').dispatchEvent(new h.w.Event('invalid',{cancelable:true}));assert.equal(h.d.querySelector('#selectionDialog').open,true);assert.match(h.d.querySelector('.selection-error').textContent,/Please choose/);
 });
 test('reports, All Dates and dynamic filter options retain event behavior',t=>{
-  const h=setup(t);h.d.querySelector('[data-open-report="receivables"]').click();h.d.querySelector('[data-report-scope="projects"]').click();h.open('reportProject');h.search('woodwork');h.pick('Sample woodwork project');assert.match(h.source('reportContent').textContent,/PROJECT RECEIVABLE STATEMENT/);
+  const h=setup(t);assert.equal(h.source('reportClearBtn'),null);assert.equal(h.source('reportCsvBtn'),null);h.d.querySelector('[data-open-report="receivables"]').click();h.d.querySelector('[data-report-scope="projects"]').click();h.open('reportProject');h.search('woodwork');h.pick('Sample woodwork project');assert.match(h.source('reportContent').textContent,/PROJECT RECEIVABLE STATEMENT/);
   h.source('reportFrom').value='2026-02-01';h.source('reportAllDatesBtn').click();assert.equal(h.source('reportFrom').value,'');assert.match(h.trigger('reportProject').textContent,/woodwork/);
 });
 test('every module card/navigation has a semantic SVG and icon-only buttons stay named',t=>{
@@ -99,8 +99,8 @@ test('wage payment accepts a partial amount and leaves the remaining balance due
 });
 test('charged project and order expenses reduce profit and appear in expense reports',t=>{
   const h=setup(t);h.run("state.entries.push({id:'expense-p',project_id:'project-1',entry_type:'expense',entry_date:'2026-02-01',description:'Project transport',amount:321});state.walkInEntries.push({id:'expense-o',walk_in_order_id:'o1',entry_type:'expense',entry_date:'2026-02-01',description:'Order fitting',amount:123});");
-  h.d.querySelector('[data-open-report="profit"]').click();const rows=h.d.querySelectorAll('#reportContent tbody tr');assert.match(rows[0].children[4].textContent,/654/);assert.match(rows[1].children[4].textContent,/123/);
-  h.d.querySelector('[data-open-report="expenses"]').click();assert.match(h.source('reportContent').textContent,/Project transport/);assert.match(h.source('reportContent').textContent,/Order fitting/);
+  h.d.querySelector('[data-open-report="profit"]').click();h.source('reportAllDatesBtn').click();const rows=h.d.querySelectorAll('#reportContent tbody tr');assert.match(rows[0].children[4].textContent,/654/);assert.match(rows[1].children[4].textContent,/123/);
+  h.d.querySelector('[data-open-report="expenses"]').click();h.source('reportAllDatesBtn').click();assert.match(h.source('reportContent').textContent,/Project transport/);assert.match(h.source('reportContent').textContent,/Order fitting/);
 });
 test('Cash appears in the List of Banks by default',t=>{const h=setup(t);h.run("route('bankAccounts')");assert.match(h.source('bankAccountList').textContent,/Cash/);assert.match(h.source('bankAccountList').textContent,/Default cash ledger/);});
 test('editing Cash preserves its account type and requires no bank details',async t=>{
@@ -109,7 +109,7 @@ test('editing Cash preserves its account type and requires no bank details',asyn
   assert.equal(h.run("account('cash').account_type"),'Cash');h.run("openBankAccount('b1')");assert.equal(h.source('bankAccountBank').required,true);assert.equal(h.source('bankAccountBank').closest('label').hidden,false);
 });
 test('business overheads reduce displayed net profit even without jobs',t=>{
-  const h=setup(t);h.run("state.projects=[];state.walkInOrders=[];state.payments=[{id:'rent',payment_type:'expense',payment_date:'2026-08-01',amount:500}]");h.d.querySelector('[data-open-report="profit"]').click();
+  const h=setup(t);h.run("state.projects=[];state.walkInOrders=[];state.payments=[{id:'rent',payment_type:'expense',payment_date:'2026-08-01',amount:500}]");h.d.querySelector('[data-open-report="profit"]').click();h.source('reportAllDatesBtn').click();
   const rows=h.d.querySelectorAll('#reportContent tbody tr');assert.equal(rows.length,2);assert.match(rows[0].textContent,/Business overheads/);assert.match(rows[1].textContent,/Net profit \/ loss/);assert.match(rows[1].lastElementChild.textContent,/-500/);
 });
 test('approving a project uses the simple sequential invoice number',async t=>{
