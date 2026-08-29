@@ -17,8 +17,9 @@ test('order invoice matches project document header and has correctly ordered ta
 test('project quote and invoice keep contact exactly once and keep negative scope deductions',t=>{
   const h=setup(t),quote=documentFor(h,h.quote());contact(quote);brandedHeader(quote);assert.match(quote.querySelector('.document-disclaimer').textContent,/Prices are subject to change until approval and advance payment/);const node=documentFor(h,h.project());contact(node);brandedHeader(node);assert.match(node.querySelector('.document-meta').textContent,/DATE.*INVOICE NO\..*INV-0001/s);assert.match(node.querySelector('.document-table .negative').textContent,/5,000/);assert.ok(node.querySelector('.document-disclaimer .disclaimer-edit'));
 });
-test('all receipt and purchase print-preview types contain one contact block',t=>{
-  const h=setup(t);for(const call of ["viewReceipt('receipt-1')","viewOrderReceipt('order-receipt')","viewPurchasePayment('supplier-payment')","viewPurchase('bill-1')"]){h.run(call);contact(h.w.document.querySelector('#detailBody .pdf-document'));}
+test('receipts retain contact while purchase preview omits proprietor contact',t=>{
+  const h=setup(t);for(const call of ["viewReceipt('receipt-1')","viewOrderReceipt('order-receipt')","viewPurchasePayment('supplier-payment')"]){h.run(call);contact(h.w.document.querySelector('#detailBody .pdf-document'));}
+  h.run("viewPurchase('bill-1')");const purchase=h.w.document.querySelector('#detailBody .pdf-document');assert.equal(purchase.querySelector('.business-contact'),null);assert.doesNotMatch(purchase.textContent,/Proprietor Ali Raza Mughal|03024441235/);
 });
 test('quotes and both invoice types show separate date and number fields',t=>{
   const h=setup(t);

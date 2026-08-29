@@ -52,6 +52,8 @@ button{cursor:pointer}
 .topbar[data-screen="purchaseSuppliers"]{--screen-color:#754b32}
 .topbar[data-screen="purchaseMaterials"]{--screen-color:#876426}
 .topbar[data-screen="purchases"]{--screen-color:#84503a}
+.topbar[data-screen="cashPurchasing"]{--screen-color:#35673f}
+.topbar[data-screen="consumablePool"]{--screen-color:#6c5932}
 .topbar[data-screen="purchasePayments"]{--screen-color:#735f32}
 .topbar[data-screen="labourPayments"]{--screen-color:#865044}
 .topbar[data-screen="banking"]{--screen-color:#17666b}
@@ -170,6 +172,14 @@ main{padding:2px 17px 30px}
 .invoice-line-grid .wide{grid-column:1/-1}
 .invoice-line label{font-size:10px}
 .invoice-line input,.invoice-line select,.invoice-line textarea{min-height:45px;padding:11px 12px}
+.collapsed-details{width:max-content;border:0;background:transparent;color:var(--green);padding:7px 2px;font:700 12px/1.2 inherit;display:flex;align-items:center;gap:6px}
+.collapsible-field{animation:details-in .16s ease-out}
+.line-details-toggle{grid-column:1/-1;margin-top:-2px}
+.consumable-line [data-purchase-line-qty-wrap]{display:none}
+.consumable-line [data-purchase-line-rate-wrap]{grid-column:1/-1}
+.pool-progress{height:7px;border-radius:999px;background:#e5e8e5;overflow:hidden;margin-top:8px}
+.pool-progress>span{display:block;height:100%;background:#54765f}
+@keyframes details-in{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
 .totals-card{display:grid;gap:12px;padding:16px;border-radius:18px;background:#202321;color:#fff}
 .totals-card>span{display:flex;align-items:center;justify-content:space-between;font-size:12px}
 .totals-card label{color:#c5c8c5}

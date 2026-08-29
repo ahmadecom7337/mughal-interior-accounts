@@ -124,6 +124,20 @@ test('charged project and order expenses reduce profit and appear in expense rep
   h.d.querySelector('[data-open-report="expenses"]').click();h.source('reportAllDatesBtn').click();assert.match(h.source('reportContent').textContent,/Project transport/);assert.match(h.source('reportContent').textContent,/Order fitting/);
 });
 test('Cash appears in the List of Banks by default',t=>{const h=setup(t);h.run("route('bankAccounts')");assert.match(h.source('bankAccountList').textContent,/Cash/);assert.match(h.source('bankAccountList').textContent,/Default cash ledger/);});
+test('consumable purchases use amount-only lines with collapsed details',async t=>{
+  const h=setup(t);h.run("state.suppliers=[{id:'cash-supplier',name:'Cash Purchase Supplier'}];state.materials.push({id:'c1',name:'Nails',unit:'piece',tracking_type:'consumable'});openPurchase('cash')");await new Promise(r=>setImmediate(r));
+  const line=h.d.querySelector('.purchase-line'),select=line.querySelector('[data-purchase-line-material]');select.value='c1';select.dispatchEvent(new h.w.Event('change',{bubbles:true}));
+  assert.ok(line.classList.contains('consumable-line'));assert.equal(line.querySelector('[data-purchase-line-qty]').value,'1');assert.match(line.querySelector('[data-purchase-line-rate-label]').textContent,/Total amount/);
+  const details=line.querySelector('[data-purchase-line-details-wrap]');assert.ok(details.classList.contains('hidden'));line.querySelector('[data-toggle-line-details]').click();assert.equal(details.classList.contains('hidden'),false);
+  assert.equal(h.source('cashPurchaseAccount').required,true);assert.equal(h.source('purchaseSupplierLabel').classList.contains('hidden'),true);
+});
+test('consumable pool and project allocation track rupee balance',async t=>{
+  const h=setup(t);h.run("state.materials.push({id:'c1',name:'Glue',unit:'piece',tracking_type:'consumable'});state.materialMovements=[{id:'buy',material_id:'c1',movement_type:'purchase',movement_date:'2026-08-01',quantity:1,unit_cost:5000},{id:'use',material_id:'c1',project_id:'project-1',movement_type:'project_issue',movement_date:'2026-08-02',quantity:1,unit_cost:2000}];render();route('consumablePool')");
+  assert.match(h.source('consumablePoolSummary').textContent,/Purchased.*5,000.*Allocated.*2,000.*remaining.*3,000/s);assert.match(h.source('consumablePoolList').textContent,/Glue.*3,000/s);
+  h.run("openMaterialAssignment('assign');document.getElementById('materialAssignmentProject').value='project-1';document.getElementById('materialAssignmentMaterial').value='c1';document.getElementById('materialAssignmentQuantity').value='1000';updateMaterialCost()");
+  assert.match(h.source('materialStockHelp').textContent,/Rs\. 3,000/);const form=h.source('materialAssignmentForm');form.dispatchEvent(new h.w.SubmitEvent('submit',{bubbles:true,cancelable:true,submitter:form.querySelector('[type="submit"]')}));await new Promise(r=>setImmediate(r));
+  assert.equal(h.run('state.materialMovements[0].quantity'),1);assert.equal(h.run('state.materialMovements[0].unit_cost'),1000);assert.equal(h.run("materialMetrics(material('c1')).stock"),2000);
+});
 test('editing Cash preserves its account type and requires no bank details',async t=>{
   const h=setup(t);h.run("openBankAccount('cash')");assert.equal(h.source('bankAccountBank').required,false);assert.equal(h.source('bankAccountBank').closest('label').hidden,true);
   const form=h.source('bankAccountForm');assert.equal(form.checkValidity(),true);form.dispatchEvent(new h.w.SubmitEvent('submit',{bubbles:true,cancelable:true,submitter:form.querySelector('[type="submit"]')}));await new Promise(r=>setImmediate(r));
