@@ -146,7 +146,7 @@ begin
     where b.supplier_id=p_supplier_id and b.business_id=p_business_id and b.status='Posted'
     order by b.bill_date,b.created_at,b.id for update
   loop
-    exit when v_remaining<=0; v_last_bill:=v_bill.id; v_apply:=least(v_remaining,v_bill.due);
+    exit when v_remaining<=0; v_apply:=least(v_remaining,v_bill.due);
     if v_apply>0 then
       update public.purchase_bills set amount_paid=amount_paid+v_apply,payment_status=case when amount_paid+v_apply>=total_amount then 'Paid' else 'Partly Paid' end where id=v_bill.id;
       v_remaining:=v_remaining-v_apply;
