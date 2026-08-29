@@ -20,10 +20,11 @@ function setup(now='2026-08-28T12:00:00') {
   vm.runInContext(fs.readFileSync(path.join(root,'app-mobile.js'),'utf8').split('class Store')[0],context);
   context.fixture=structuredClone(fixture);
   vm.runInContext('Object.assign(state, fixture);',context);
+  vm.runInContext('globalThis.helpers={materialMetrics,supplierBalance};',context);
   context.working=async(label,button,fn)=>fn();context.toast=()=>{};
   context.window.html2pdf=true;
   context.html2pdf=()=>({set(options){this.options=options;return this;},from(node){this.node=node;return this;},async save(){exports.push(this);}});
-  const source=fs.readFileSync(path.join(root,'reports-mobile.js'),'utf8').replace(/\}\)\(\);\s*$/, 'globalThis.api={projectStatementRows,renderReceivables,renderCurrent,reportState,clearReportDates,downloadPdf,reportFileName,openReport,showHub};})();');
+  const source=fs.readFileSync(path.join(root,'reports-mobile.js'),'utf8').replace(/\}\)\(\);\s*$/, 'globalThis.api={projectStatementRows,jobRows,renderReceivables,renderCurrent,reportState,clearReportDates,downloadPdf,reportFileName,openReport,showHub};})();');
   vm.runInContext(source,context);
   context.api.reportState.type='receivables';context.api.reportState.scope='projects';
   return {api:context.api,context,element,exports,events,job:context.fixture.projects[0],ledger:()=>context.api.projectStatementRows(context.fixture.projects[0])};
@@ -97,6 +98,28 @@ test('currency rounding and stable same-day ordering',()=>{
   const h=setup();h.job.original_contract_amount=.3;h.context.fixture.entries.length=0;
   h.context.fixture.payments.splice(0,99,{id:'b',project_id:'project-1',payment_type:'customer_receipt',payment_date:'2026-01-05',amount:.1},{id:'a',project_id:'project-1',payment_type:'customer_receipt',payment_date:'2026-01-05',amount:.2});
   const ledger=h.ledger();assert.equal(ledger.closing,0);assert.deepEqual(Array.from(ledger.rows,row=>row.id),['invoice-1','a','b']);
+});
+test('project opening receivable accepts later receipts and opening profit is reduced by later costs',()=>{
+  const h=setup();
+  Object.assign(h.job,{original_contract_amount:0,opening_invoice_amount:100000,opening_received_amount:40000,opening_expenses_amount:10000,opening_material_amount:20000,opening_labour_amount:15000});
+  h.context.fixture.invoices.length=0;h.context.fixture.entries.length=0;h.context.fixture.payments.splice(0,99,{id:'opening-receipt',project_id:'project-1',payment_type:'customer_receipt',payment_date:'2026-02-10',amount:10000,payment_number:'RCP-OPEN'});
+  h.element('#reportFrom').value='2026-02-01';h.element('#reportTo').value='2026-02-28';
+  const ledger=h.ledger();assert.equal(ledger.opening,60000);assert.equal(ledger.receipts,10000);assert.equal(ledger.closing,50000);
+  h.context.fixture.entries.push({id:'new-expense',project_id:'project-1',entry_type:'expense',entry_date:'2026-02-12',amount:5000});
+  h.context.fixture.materialMovements.push({id:'new-material',project_id:'project-1',movement_type:'project_issue',movement_date:'2026-02-12',quantity:1,unit_cost:7000});
+  h.context.fixture.labourAssignments.push({id:'new-labour',project_id:'project-1',assignment_date:'2026-02-12',amount:3000});
+  h.api.reportState.type='profit';h.api.reportState.scope='projects';h.element('#reportProject').value='all';h.element('#reportFrom').value='';h.element('#reportTo').value='';
+  const row=h.api.jobRows()[0];assert.equal(row.revenue,100000);assert.equal(row.cost,60000);assert.equal(row.revenue-row.cost,40000);
+});
+test('material and supplier opening balances are included without fake transactions',()=>{
+  const h=setup();
+  h.context.fixture.materials.push({id:'stock',tracking_type:'stock',opening_quantity:12},{id:'pool',tracking_type:'consumable',opening_amount:5000});
+  h.context.fixture.materialMovements.push({material_id:'stock',movement_type:'project_issue',quantity:2,unit_cost:100},{material_id:'pool',movement_type:'project_issue',quantity:1,unit_cost:2000});
+  assert.equal(h.context.helpers.materialMetrics(h.context.fixture.materials[0]).stock,10);
+  assert.equal(h.context.helpers.materialMetrics(h.context.fixture.materials[1]).stock,3000);
+  h.context.fixture.suppliers.push({id:'supplier-opening',opening_amount:10000,opening_amount_paid:2000});
+  h.context.fixture.purchaseBills.push({supplier_id:'supplier-opening',status:'Posted',total_amount:5000,amount_paid:1000});
+  assert.equal(h.context.helpers.supplierBalance('supplier-opening'),12000);
 });
 test('client-provided text is escaped',()=>{
   const h=setup();h.job.name='<script>unsafe</script>';h.api.renderReceivables();assert.doesNotMatch(h.element('#reportContent').innerHTML,/<script>/);assert.match(h.element('#reportContent').innerHTML,/&lt;script&gt;/);

@@ -9,6 +9,11 @@ module.exports = {
     {id: 'scope-2', project_id: 'project-1', entry_type: 'scope_decrease', entry_date: '2026-02-08', amount: 5000, description: 'Removed shelf'},
     {id: 'mirror', project_id: 'project-1', entry_type: 'receipt', entry_date: '2026-01-10', amount: 20000}
   ],
+  materialMovements: [],
+  materials: [],
+  labourAssignments: [],
+  suppliers: [],
+  purchaseBills: [],
   payments: [
     {id: 'receipt-1', project_id: 'project-1', payment_type: 'customer_receipt', payment_date: '2026-01-10', amount: 20000, payment_number: 'RCP-0001', description: 'First payment'},
     {id: 'receipt-2', project_id: 'project-1', payment_type: 'customer_receipt', payment_date: '2026-02-10', amount: 40000, payment_number: 'RCP-0002', description: 'Second payment'},
