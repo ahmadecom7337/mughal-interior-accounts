@@ -1,6 +1,6 @@
 /* Offline fallback only: never cache accounting records, credentials or API responses. */
 const CACHE_PREFIX = `mughal-pwa:${new URL(self.registration.scope).pathname}:`;
-const CACHE_NAME = `${CACHE_PREFIX}v3`;
+const CACHE_NAME = `${CACHE_PREFIX}v4`;
 const OFFLINE_URL = new URL('offline.html', self.registration.scope).href;
 const ICON_URL = new URL('assets/pwa/icon-192.png', self.registration.scope).href;
 const APP_PAGES = new Set([self.registration.scope, new URL('index.html', self.registration.scope).href, OFFLINE_URL]);

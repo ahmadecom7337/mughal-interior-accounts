@@ -127,7 +127,10 @@ main{padding:2px 17px 30px}
 .status.advance-credit,.advance-credit{background:#def0e7;color:#276248}
 .wage-due-text{color:#a23c35!important;font-weight:760}
 .advance-credit-text{color:#2b6d50!important;font-weight:760}
-.card-actions{margin-top:12px}
+.card-actions{display:grid;gap:8px;margin-top:12px}
+.whatsapp-button{display:inline-flex;align-items:center;justify-content:center;gap:7px;background:#1f9d55!important;color:#fff!important}
+.whatsapp-button:hover{background:#178144!important}
+.whatsapp-button img{display:block;filter:brightness(0) invert(1)}
 .spaced-list{margin-top:13px}
 .segmented{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-bottom:14px;padding:5px;border-radius:17px;background:#dfe1df}
 .segmented button{min-height:43px;border:0;border-radius:13px;background:transparent;color:#737673;font-size:12px;font-weight:750}
