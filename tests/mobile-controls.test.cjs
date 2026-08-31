@@ -152,6 +152,15 @@ test('purchase bill import loads every stock and consumable line for projects an
 test('bulk material migration is atomic, permissioned and retains server stock validation',()=>{
   const sql=fs.readFileSync(path.join(root,'supabase-bulk-material-assignment-20260831.sql'),'utf8');assert.match(sql,/create or replace function public\.assign_materials_bulk/);assert.match(sql,/private\.is_business_member/);assert.match(sql,/insert into public\.material_movements/);assert.match(sql,/grant execute[\s\S]*to authenticated/);assert.doesNotMatch(sql,/exception[\s\S]*when others/);
 });
+test('material import stays stacked and shows live totals for projects and orders',t=>{
+  const h=setup(t),css=fs.readFileSync(path.join(root,'mobile.css'),'utf8');
+  assert.doesNotMatch(css,/@media\(min-width:540px\)\{\s*\.material-import/);
+  h.run("state.suppliers=[{id:'s1',name:'Sample supplier'}];state.materials=[{id:'m1',name:'Plywood',unit:'sheet',tracking_type:'stock'},{id:'c1',name:'Glue',unit:'piece',tracking_type:'consumable'}];state.purchaseBills=[{id:'bill1',supplier_id:'s1',bill_number:'PB-10',bill_date:'2026-08-20',status:'Posted'}];state.purchaseBillItems=[{id:'line1',purchase_bill_id:'bill1',material_id:'m1',quantity:8,unit_cost:100,line_total:800},{id:'line2',purchase_bill_id:'bill1',material_id:'c1',quantity:1,unit_cost:5000,line_total:5000}];state.materialMovements=[{id:'buy1',material_id:'m1',movement_type:'purchase',movement_date:'2026-08-20',quantity:8,unit_cost:100},{id:'buy2',material_id:'c1',movement_type:'purchase',movement_date:'2026-08-20',quantity:1,unit_cost:5000}];state.walkInOrders[0].status='Pending'");
+  for(const [open,billId,importId,totalId] of [["openMaterialAssignment('assign')",'materialAssignmentPurchaseBill','materialAssignmentImportBill','materialAssignmentGrandTotal'],["openOrderMaterial('assign')",'orderMaterialPurchaseBill','orderMaterialImportBill','orderMaterialGrandTotal']]){
+    h.run(open);h.source(billId).value='bill1';h.source(importId).click();assert.equal(h.source(totalId).textContent,'Rs. 5,800');
+    const first=h.source(totalId).closest('form').querySelector('[data-material-line-quantity]');first.value='4';first.dispatchEvent(new h.w.Event('input',{bubbles:true}));assert.equal(h.source(totalId).textContent,'Rs. 5,400');
+  }
+});
 test('editing Cash preserves its account type and requires no bank details',async t=>{
   const h=setup(t);h.run("openBankAccount('cash')");assert.equal(h.source('bankAccountBank').required,false);assert.equal(h.source('bankAccountBank').closest('label').hidden,true);
   const form=h.source('bankAccountForm');assert.equal(form.checkValidity(),true);form.dispatchEvent(new h.w.SubmitEvent('submit',{bubbles:true,cancelable:true,submitter:form.querySelector('[type="submit"]')}));await new Promise(r=>setImmediate(r));
