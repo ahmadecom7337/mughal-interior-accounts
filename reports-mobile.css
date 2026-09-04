@@ -10,23 +10,24 @@
 .report-date-tools [aria-pressed="true"]{outline:2px solid #74877b;outline-offset:2px}
 .project-statement{background:#fff;padding:18px 14px;border-radius:16px;color:var(--ink)}
 .statement-heading{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;border-bottom:2px solid #222;padding-bottom:16px;margin-bottom:16px}
-.statement-heading p{font-size:10px;font-weight:750;letter-spacing:.04em;margin:0 0 6px}
-.statement-heading h2{font-size:22px;line-height:1.2;margin:0 0 8px}
-.statement-heading span{font-size:12px;color:#626762}
+.statement-heading p{font-size:12px;font-weight:750;letter-spacing:.04em;margin:0 0 6px}
+.statement-heading h2{font-size:25px;line-height:1.2;margin:0 0 8px}
+.statement-heading span{font-size:13px;color:#626762}
 .statement-heading img{width:85px;height:60px;object-fit:contain;mix-blend-mode:multiply}
 .statement-parties{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px;overflow-wrap:anywhere}
 .statement-parties small,.statement-parties b,.statement-parties span{display:block}
-.statement-parties small{font-size:9px;letter-spacing:.08em;color:#6b716c;margin-bottom:5px}
-.statement-parties b{font-size:14px;margin-bottom:5px}
-.statement-parties span{font-size:12px;line-height:1.5;white-space:pre-line}
+.statement-parties small{font-size:11px;letter-spacing:.08em;color:#6b716c;margin-bottom:5px}
+.statement-parties b{font-size:16px;margin-bottom:5px}
+.statement-parties span{font-size:13px;line-height:1.5;white-space:pre-line}
 .project-statement .report-table-wrap{border-radius:0;box-shadow:none;border:1px solid #dfe3df}
-.project-statement .statement-table{min-width:610px;font-size:12px}
-.statement-table th{white-space:normal;font-size:10px;letter-spacing:0;line-height:1.4}
-.statement-table td b{font-size:12px}
-.statement-table td small{font-size:11px;color:#626762;white-space:pre-line;overflow-wrap:anywhere}
+.project-statement .statement-table{min-width:610px;font-size:13px}
+.statement-table th{white-space:normal;font-size:12px;letter-spacing:0;line-height:1.4}
+.statement-table td{font-size:13px}
+.statement-table td b{font-size:14px}
+.statement-table td small{font-size:12px;color:#626762;white-space:pre-line;overflow-wrap:anywhere}
 .statement-opening td{background:#f4f6f4}
 .statement-total td{border-top:2px solid #313b34;background:#f4f6f4}
-.statement-note{font-size:11px;color:#626762;line-height:1.5;margin:12px 0 0}
+.statement-note{font-size:12px;color:#626762;line-height:1.5;margin:12px 0 0}
 .report-scope{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;margin-bottom:12px;padding:5px;border-radius:17px;background:#dfe1df}
 .report-scope button{min-height:42px;border:0;border-radius:13px;background:transparent;color:#737673;font-size:11px;font-weight:780}
 .report-scope button.active{background:#fff;color:var(--ink);box-shadow:0 6px 16px rgba(25,27,26,.08)}
@@ -41,33 +42,41 @@
 .report-negative{color:#b33e46!important}
 .report-positive{color:#2b7655!important}
 .report-table-wrap{overflow:auto;margin-bottom:14px;border-radius:18px;background:#fff;box-shadow:var(--shadow)}
-.report-table{width:100%;min-width:620px;border-collapse:collapse;font-size:10px}
+.report-table{width:100%;min-width:620px;border-collapse:collapse;font-size:12px}
 .report-table.compact{min-width:520px}
-.report-table th{padding:11px 10px;background:#222523;color:#fff;text-align:left;font-size:8px;letter-spacing:.06em;text-transform:uppercase;white-space:nowrap}
-.report-table td{padding:11px 10px;border-bottom:1px solid #ececea;vertical-align:top;color:#5f625f}
+.report-table th{padding:11px 10px;background:#222523;color:#fff;text-align:left;font-size:11px;letter-spacing:.06em;text-transform:uppercase;white-space:nowrap}
+.report-table td{padding:11px 10px;border-bottom:1px solid #ececea;vertical-align:top;color:#5f625f;font-size:12px}
 .report-table tr:last-child td{border-bottom:0}
-.report-table td b{display:block;color:var(--ink);font-size:10px}
-.report-table td small{display:block;margin-top:3px;color:#999c99;font-size:8px}
-.report-table .number{text-align:right;white-space:nowrap;font-weight:750;color:var(--ink)}
+.report-table td b{display:block;color:var(--ink);font-size:13px}
+.report-table td small{display:block;margin-top:3px;color:#999c99;font-size:11px}
+.report-table .number{text-align:right;white-space:nowrap;font-weight:750;color:var(--ink);font-size:13px}
 .report-ledger{min-width:720px}
 .report-balance{font-weight:850!important}
-.report-section-note{margin:0 2px 10px;color:#818481;font-size:10px;line-height:1.5}
+.report-section-note{margin:0 2px 10px;color:#818481;font-size:11px;line-height:1.5}
 .report-empty{padding:34px 18px;border-radius:18px;background:#fff;box-shadow:var(--shadow);text-align:center}
 .report-empty b,.report-empty span{display:block}
-.report-empty b{font-size:14px}.report-empty span{margin-top:5px;color:var(--muted);font-size:11px}
+.report-empty b{font-size:15px}.report-empty span{margin-top:5px;color:var(--muted);font-size:12px}
 .report-print-document{position:fixed;left:-10000px;top:0;width:1050px;padding:36px;background:#fff;color:#222;font-family:Inter,Arial,sans-serif}
 .report-print-head{display:flex;justify-content:space-between;gap:20px;align-items:flex-start;margin-bottom:22px;padding-bottom:16px;border-bottom:3px solid #222}
 .report-print-head img{width:130px;height:74px;object-fit:contain;mix-blend-mode:multiply}
-.report-print-head h1{margin:0 0 5px;font-size:25px}.report-print-head p{margin:2px 0;color:#666;font-size:10px}
+.report-print-head h1{margin:0 0 5px;font-size:28px}.report-print-head p{margin:3px 0;color:#555;font-size:13px}
 .report-print-document .report-table-wrap{overflow:visible;box-shadow:none;border:1px solid #ddd}
-.report-print-document .report-table{min-width:0;font-size:9px}
+.report-print-document .report-table{min-width:0;font-size:12px}
+.report-print-document .report-table th{font-size:12px;padding:12px 10px}
+.report-print-document .report-table td{font-size:12px;padding:12px 10px}
+.report-print-document .report-table td b{font-size:13px}
+.report-print-document .report-table td small{font-size:11px}
+.report-print-document .report-table .number{font-size:13px}
 .report-print-document.statement-print{width:730px;padding:18px}
 .statement-print .project-statement{padding:0;border-radius:0}
-.statement-print .statement-table{min-width:0;width:100%;table-layout:fixed;font-size:12px}
+.statement-print .statement-table{min-width:0;width:100%;table-layout:fixed;font-size:13px}
+.statement-print .statement-table th{font-size:12px}
 .statement-print .statement-table th:nth-child(1){width:14%}
 .statement-print .statement-table th:nth-child(2){width:30%}
 .statement-print .statement-table th:nth-child(n+3){width:18.666%}
-.statement-print .statement-table td{padding:10px 7px;overflow-wrap:anywhere}
-.statement-print .statement-table .number{white-space:normal}
+.statement-print .statement-table td{padding:10px 7px;overflow-wrap:anywhere;font-size:13px}
+.statement-print .statement-table td b{font-size:14px}
+.statement-print .statement-table td small{font-size:12px}
+.statement-print .statement-table .number{white-space:normal;font-size:13px}
 .statement-print .statement-table tr,.statement-print .statement-heading,.statement-print .statement-parties{break-inside:avoid}
 .html2pdf__container .report-print-document{position:static;left:auto;top:auto}
