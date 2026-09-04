@@ -62,8 +62,11 @@ button{cursor:pointer}
 .topbar[data-screen="cashDeposits"]{--screen-color:#17645b}
 .topbar[data-screen="bankTransfers"]{--screen-color:#2b5d73}
 .topbar[data-screen="bankingExpenses"]{--screen-color:#3c6367}
+.topbar[data-screen="partnerDrawings"]{--screen-color:#1f5961}
 .topbar[data-screen="reports"]{--screen-color:#62467d}
 .topbar[data-screen="report-profit"]{--screen-color:#286347}
+.topbar[data-screen="report-customerStatement"]{--screen-color:#3a4b7c}
+.topbar[data-screen="report-supplierStatement"]{--screen-color:#634152}
 .topbar[data-screen="report-receivables"]{--screen-color:#345c89}
 .topbar[data-screen="report-expenses"]{--screen-color:#89483c}
 .topbar[data-screen="report-labourAssigned"]{--screen-color:#76552d}
@@ -74,6 +77,7 @@ button{cursor:pointer}
 .topbar[data-screen="report-materialQuantity"]{--screen-color:#466642}
 .topbar[data-screen="report-labourStatement"]{--screen-color:#72553f}
 .topbar[data-screen="report-bankStatement"]{--screen-color:#20675f}
+.topbar[data-screen="report-partnerDrawings"]{--screen-color:#4c3968}
 .avatar{width:42px;height:42px;border:0;border-radius:50%;background:#fff;color:var(--ink);font-size:11px;font-weight:850;box-shadow:var(--shadow)}
 main{padding:2px 17px 30px}
 .view{display:none}

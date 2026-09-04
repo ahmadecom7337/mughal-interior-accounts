@@ -55,6 +55,8 @@
       <section id="reportsView" class="view">
         <div id="reportsHubPanel" class="action-grid report-action-grid">
           <button data-open-report="profit"><span class="action-icon">P</span><b>Profit report</b><small>Overall, projects and orders</small></button>
+          <button data-open-report="customerStatement"><span class="action-icon">CS</span><b>Customer statement</b><small>Customer 2-column statement</small></button>
+          <button data-open-report="supplierStatement"><span class="action-icon">SS</span><b>Supplier statement</b><small>Supplier 2-column statement</small></button>
           <button data-open-report="receivables"><span class="action-icon">R</span><b>Receivable report</b><small>Outstanding customer balances</small></button>
           <button data-open-report="expenses"><span class="action-icon">E</span><b>Expenses report</b><small>Business and job expenses</small></button>
           <button data-open-report="labourAssigned"><span class="action-icon">LA</span><b>Labour assigned</b><small>Days and wages by job</small></button>
@@ -73,6 +75,7 @@
           <div id="reportFilters" class="report-filters">
             <label id="reportFromWrap">From date<input id="reportFrom" type="date"></label>
             <label id="reportToWrap">To date<input id="reportTo" type="date"></label>
+            <label id="reportAsOfWrap" class="report-wide hidden">As of date<input id="reportAsOf" type="date"></label>
             <label id="reportProjectWrap">Project<select id="reportProject"></select></label>
             <label id="reportOrderWrap">Order<select id="reportOrder"></select></label>
             <label id="reportSupplierWrap">Supplier<select id="reportSupplier"></select></label>
